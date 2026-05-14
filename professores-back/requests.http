@@ -1,0 +1,49 @@
+### Variáveis
+@baseUrl = http://localhost:3000
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Criar Aula - Sucesso
+POST {{baseUrl}}/aulas
+Content-Type: application/json
+
+{
+  "diaSemana": "SEGUNDA",
+  "professorId": "prof-123",
+  "disciplinaId": "disc-456",
+  "cursoId": "curso-789"
+}
+
+### Criar Aula - Professor Indisponível (esperado erro 409)
+POST {{baseUrl}}/aulas
+Content-Type: application/json
+
+{
+  "diaSemana": "TERCA",
+  "professorId": "prof-indisponivel",
+  "disciplinaId": "disc-456",
+  "cursoId": "curso-789"
+}
+
+### Criar Aula - Conflito de Professor (professor já tem aula neste dia)
+POST {{baseUrl}}/aulas
+Content-Type: application/json
+
+{
+  "diaSemana": "SEGUNDA",
+  "professorId": "prof-123",
+  "disciplinaId": "disc-789",
+  "cursoId": "curso-999"
+}
+
+### Criar Aula - Conflito de Curso (curso já tem aula neste dia)
+POST {{baseUrl}}/aulas
+Content-Type: application/json
+
+{
+  "diaSemana": "SEGUNDA",
+  "professorId": "prof-999",
+  "disciplinaId": "disc-789",
+  "cursoId": "curso-789"
+}

@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DiaSemana {
+  SEGUNDA
+  TERCA
+  QUARTA
+  QUINTA
+  SEXTA
+}
+
+model Curso {
+  id          String        @id @default(cuid())
+  nome        String        @unique
+  disciplinas Disciplina[]
+  aulas       Aula[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("cursos")
+}
+
+model Disciplina {
+  id        String   @id @default(cuid())
+  nome      String
+  cursoId   String
+  curso     Curso    @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  aulas     Aula[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([nome, cursoId])
+  @@map("disciplinas")
+}
+
+model Professor {
+  id             String           @id @default(cuid())
+  nome           String           @unique
+  disponibilidades Disponibilidade[]
+  aulas          Aula[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@map("professores")
+}
+
+model Disponibilidade {
+  id          String     @id @default(cuid())
+  diaSemana   DiaSemana
+  disponivel  Boolean    @default(true)
+  professorId String
+  professor   Professor  @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([professorId, diaSemana])
+  @@map("disponibilidades")
+}
+
+model Aula {
+  id          String     @id @default(cuid())
+  diaSemana   DiaSemana
+  professorId String
+  professor   Professor  @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  disciplinaId String
+  disciplina  Disciplina @relation(fields: [disciplinaId], references: [id], onDelete: Cascade)
+  cursoId     String
+  curso       Curso      @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([professorId, diaSemana])
+  @@unique([cursoId, diaSemana])
+  @@map("aulas")
+}
