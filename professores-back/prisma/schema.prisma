@@ -82,3 +82,13 @@ model Aula {
   @@unique([cursoId, diaSemana])
   @@map("aulas")
 }
+
+model Usuario {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  senha     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("usuarios")
+}
