@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <h2>UniSENAI</h2>
+
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="professores.html" class="active">Professores</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="disciplinas.html">Disciplinas</a>
+      <a href="aulas.html">Aulas</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="topbar">
+      <h1>Professores</h1>
+    </header>
+
+    <section class="form-section">
+
+      <input type="text" id="nome-professor" placeholder="Nome do professor">
+      <input type="email" id="email-professor" placeholder="E-mail">
+
+      <button onclick="adicionarProfessor()">
+        Cadastrar
+      </button>
+
+    </section>
+
+    <section class="table-section">
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabela-professores"></tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="./js/professores.js"></script>
+</body>
+</html>

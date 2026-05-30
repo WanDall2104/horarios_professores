@@ -16,6 +16,7 @@ enum DiaSemana {
   QUARTA
   QUINTA
   SEXTA
+  SABADO
 }
 
 model Curso {

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <h2>UniSENAI</h2>
+
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="professores.html">Professores</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="disciplinas.html">Disciplinas</a>
+      <a href="aulas.html">Aulas</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="topbar">
+      <h1>Sistema de Horários</h1>
+      <button onclick="logout()">Sair</button>
+    </header>
+
+    <section class="cards">
+
+      <div class="card">
+        <h3>Professores</h3>
+        <p id="total-professores">0</p>
+      </div>
+
+      <div class="card">
+        <h3>Cursos</h3>
+        <p id="total-cursos">0</p>
+      </div>
+
+      <div class="card">
+        <h3>Aulas</h3>
+        <p id="total-aulas">0</p>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="./js/dashboard.js"></script>
+</body>
+</html>
