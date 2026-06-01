@@ -66,7 +66,7 @@
       </div>
 
       <div class="form-card">
-        <form class="professor-form">
+        <form class="professor-form" id="professor-form">
           <div class="form-row">
             <div class="form-group">
               <label for="nome-professor">Nome Completo</label>
@@ -78,8 +78,40 @@
             </div>
           </div>
 
+          <div class="form-section">
+            <h3>Disponibilidade de Dias</h3>
+            <p class="form-section-hint">Selecione os dias em que o professor pode dar aula</p>
+            <div class="disponibilidade-grid">
+              <label class="checkbox-label">
+                <input type="checkbox" name="disponibilidade" value="SEGUNDA">
+                <span class="checkbox-custom"></span>
+                Segunda-feira
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="disponibilidade" value="TERCA">
+                <span class="checkbox-custom"></span>
+                Terça-feira
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="disponibilidade" value="QUARTA">
+                <span class="checkbox-custom"></span>
+                Quarta-feira
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="disponibilidade" value="QUINTA">
+                <span class="checkbox-custom"></span>
+                Quinta-feira
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="disponibilidade" value="SEXTA">
+                <span class="checkbox-custom"></span>
+                Sexta-feira
+              </label>
+            </div>
+          </div>
+
           <div class="form-actions">
-            <button type="button" class="btn btn-primary" onclick="adicionarProfessor()">Cadastrar Professor</button>
+            <button type="button" class="btn btn-primary" onclick="salvarProfessor()">Cadastrar Professor</button>
             <button type="reset" class="btn btn-secondary">Limpar Campos</button>
           </div>
         </form>
@@ -100,6 +132,7 @@
                 <th>ID</th>
                 <th>Nome</th>
                 <th>E-mail</th>
+                <th>Disponibilidade</th>
                 <th>Ações</th>
               </tr>
             </thead>
