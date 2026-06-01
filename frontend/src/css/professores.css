@@ -1,0 +1,437 @@
+/* PAGE CONTENT */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 36px;
+}
+
+/* CONTENT HEADER */
+.content-header {
+  margin-bottom: 32px;
+}
+
+.content-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0 0 8px 0;
+}
+
+.content-header p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* FORM CARD */
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 80, 160, 0.05);
+}
+
+.professor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--navy);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 11px 14px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  color: var(--text);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0, 119, 200, 0.12);
+}
+
+.form-group input::placeholder {
+  color: #b0bec8;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.btn {
+  padding: 13px 24px;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary {
+  flex: 1;
+  background: var(--blue);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: var(--navy);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background: var(--light);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: #e8eef5;
+  border-color: var(--blue);
+}
+
+.btn-danger {
+  background: #ffebee;
+  color: var(--error);
+  border: 1.5px solid var(--error);
+  padding: 8px 12px;
+  font-size: 11px;
+}
+
+.btn-danger:hover {
+  background: #ffcdd2;
+}
+
+.btn-edit {
+  background: #e3f2fd;
+  color: var(--blue);
+  border: 1.5px solid var(--blue);
+  padding: 8px 12px;
+  font-size: 11px;
+}
+
+.btn-edit:hover {
+  background: #bbdefb;
+}
+
+/* TABLE SECTION */
+.table-section {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 80, 160, 0.05);
+}
+
+.table-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-header h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 119, 200, 0.1);
+  border-radius: 50%;
+  font-weight: 700;
+  color: var(--blue);
+  font-size: 13px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead {
+  background: #f8fafb;
+}
+
+.data-table th {
+  padding: 14px 28px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.data-table tbody tr:hover {
+  background: #f8fafb;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  display: none;
+  padding: 40px 28px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.empty-state.show {
+  display: block;
+}
+
+/* RESPONSIVE - TABLETS E LAPTOPS MENORES */
+@media (max-width: 1024px) {
+  .page-content {
+    padding: 24px 28px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card {
+    padding: 20px;
+  }
+
+  .table-header {
+    padding: 16px 20px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 20px;
+  }
+
+  .table-actions {
+    gap: 6px;
+  }
+
+  .btn-edit,
+  .btn-danger {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20px;
+  }
+
+  .content-header h2 {
+    font-size: 18px;
+  }
+
+  .form-card {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-secondary {
+    display: none;
+  }
+
+  .table-header {
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .table-header h2 {
+    font-size: 14px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .data-table th {
+    font-size: 11px;
+  }
+
+  .table-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .btn-edit,
+  .btn-danger {
+    padding: 6px 8px;
+    font-size: 9px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-content {
+    padding: 16px;
+  }
+
+  .content-header h2 {
+    font-size: 16px;
+  }
+
+  .content-header p {
+    font-size: 12px;
+  }
+
+  .form-card {
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .professor-form {
+    gap: 16px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .form-actions {
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .btn {
+    padding: 11px 16px;
+    font-size: 12px;
+  }
+
+  .table-section {
+    border-radius: 6px;
+  }
+
+  .table-header {
+    padding: 12px 14px;
+  }
+
+  .table-header h2 {
+    font-size: 13px;
+  }
+
+  .badge {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+
+  .data-table th {
+    font-size: 10px;
+  }
+
+  .table-actions {
+    gap: 3px;
+  }
+
+  .btn-edit,
+  .btn-danger {
+    padding: 5px 6px;
+    font-size: 8px;
+  }
+
+  .empty-state {
+    padding: 30px 20px;
+  }
+
+  .empty-state p {
+    font-size: 12px;
+  }
+}

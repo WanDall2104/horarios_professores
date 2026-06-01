@@ -1,50 +1,115 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professores — Sistema de Horários</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/professores.css">
+</head>
+<body>
 
 <div class="layout">
 
   <aside class="sidebar">
-    <h2>UniSENAI</h2>
+    <div class="sidebar-header">
+      <img src="./assets/unisenaidash.png" alt="Logo UniSENAI" class="sidebar-logo">
+    </div>
 
-    <nav>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="professores.html" class="active">Professores</a>
-      <a href="cursos.html">Cursos</a>
-      <a href="disciplinas.html">Disciplinas</a>
-      <a href="aulas.html">Aulas</a>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-link" data-icon="dashboard">
+        <span class="nav-icon"></span>
+        <span>Dashboard</span>
+      </a>
+      <a href="professores.html" class="nav-link active" data-icon="professores">
+        <span class="nav-icon"></span>
+        <span>Professores</span>
+      </a>
+      <a href="cursos.html" class="nav-link" data-icon="cursos">
+        <span class="nav-icon"></span>
+        <span>Cursos</span>
+      </a>
+      <a href="disciplinas.html" class="nav-link" data-icon="disciplinas">
+        <span class="nav-icon"></span>
+        <span>Disciplinas</span>
+      </a>
+      <a href="aulas.html" class="nav-link" data-icon="aulas">
+        <span class="nav-icon"></span>
+        <span>Aulas</span>
+      </a>
     </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">Sair do Sistema</button>
+    </div>
   </aside>
 
   <main class="content">
 
     <header class="topbar">
-      <h1>Professores</h1>
+      <div class="topbar-left">
+        <h1>Gestão de Professores</h1>
+        <p class="topbar-subtitle">Gerencie os professores do sistema</p>
+      </div>
+      <div class="topbar-right">
+        <span class="user-info" id="user-name">Usuário</span>
+      </div>
     </header>
 
-    <section class="form-section">
+    <section class="page-content">
 
-      <input type="text" id="nome-professor" placeholder="Nome do professor">
-      <input type="email" id="email-professor" placeholder="E-mail">
+      <div class="content-header">
+        <h2>Novo Professor</h2>
+        <p>Preencha os dados abaixo para cadastrar um novo professor</p>
+      </div>
 
-      <button onclick="adicionarProfessor()">
-        Cadastrar
-      </button>
+      <div class="form-card">
+        <form class="professor-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nome-professor">Nome Completo</label>
+              <input type="text" id="nome-professor" placeholder="Digite o nome completo" required>
+            </div>
+            <div class="form-group">
+              <label for="email-professor">E-mail</label>
+              <input type="email" id="email-professor" placeholder="Digite o e-mail" required>
+            </div>
+          </div>
 
-    </section>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" onclick="adicionarProfessor()">Cadastrar Professor</button>
+            <button type="reset" class="btn btn-secondary">Limpar Campos</button>
+          </div>
+        </form>
+      </div>
 
-    <section class="table-section">
+      <div class="table-section">
+        <div class="table-header">
+          <h2>Lista de Professores</h2>
+          <div class="table-info">
+            <span id="total-professores-table" class="badge">0</span>
+          </div>
+        </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-
-        <tbody id="tabela-professores"></tbody>
-      </table>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-professores"></tbody>
+          </table>
+          <div class="empty-state" id="empty-state">
+            <p>Nenhum professor cadastrado ainda</p>
+          </div>
+        </div>
+      </div>
 
     </section>
 

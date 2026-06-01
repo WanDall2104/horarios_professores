@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-
+  <title>Dashboard — Sistema de Horários</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/dashboard.css">
 </head>
@@ -13,39 +13,106 @@
 <div class="layout">
 
   <aside class="sidebar">
-    <h2>UniSENAI</h2>
+    <div class="sidebar-header">
+      <img src="./assets/unisenaidash.png" alt="Logo UniSENAI" class="sidebar-logo">
+    </div>
 
-    <nav>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="professores.html">Professores</a>
-      <a href="cursos.html">Cursos</a>
-      <a href="disciplinas.html">Disciplinas</a>
-      <a href="aulas.html">Aulas</a>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-link active" data-icon="dashboard">
+        <span class="nav-icon"></span>
+        <span>Dashboard</span>
+      </a>
+      <a href="professores.html" class="nav-link" data-icon="professores">
+        <span class="nav-icon"></span>
+        <span>Professores</span>
+      </a>
+      <a href="cursos.html" class="nav-link" data-icon="cursos">
+        <span class="nav-icon"></span>
+        <span>Cursos</span>
+      </a>
+      <a href="disciplinas.html" class="nav-link" data-icon="disciplinas">
+        <span class="nav-icon"></span>
+        <span>Disciplinas</span>
+      </a>
+      <a href="aulas.html" class="nav-link" data-icon="aulas">
+        <span class="nav-icon"></span>
+        <span>Aulas</span>
+      </a>
     </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">Sair do Sistema</button>
+    </div>
   </aside>
 
   <main class="content">
 
     <header class="topbar">
-      <h1>Sistema de Horários</h1>
-      <button onclick="logout()">Sair</button>
+      <div class="topbar-left">
+        <h1>Sistema de Horários de Professores</h1>
+        <p class="topbar-subtitle">Bem-vindo ao painel de controle</p>
+      </div>
+      <div class="topbar-right">
+        <span class="user-info" id="user-name">Usuário</span>
+      </div>
     </header>
 
-    <section class="cards">
+    <section class="dashboard-content">
+      
+      <div class="stats-grid">
+        <div class="stat-card" data-stat="professores">
+          <div class="stat-icon"></div>
+          <div class="stat-info">
+            <h3>Professores</h3>
+            <p class="stat-value" id="total-professores">0</p>
+          </div>
+        </div>
 
-      <div class="card">
-        <h3>Professores</h3>
-        <p id="total-professores">0</p>
+        <div class="stat-card" data-stat="cursos">
+          <div class="stat-icon"></div>
+          <div class="stat-info">
+            <h3>Cursos</h3>
+            <p class="stat-value" id="total-cursos">0</p>
+          </div>
+        </div>
+
+        <div class="stat-card" data-stat="aulas">
+          <div class="stat-icon"></div>
+          <div class="stat-info">
+            <h3>Aulas</h3>
+            <p class="stat-value" id="total-aulas">0</p>
+          </div>
+        </div>
+
+        <div class="stat-card" data-stat="disciplinas">
+          <div class="stat-icon"></div>
+          <div class="stat-info">
+            <h3>Disciplinas</h3>
+            <p class="stat-value" id="total-disciplinas">0</p>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
-        <h3>Cursos</h3>
-        <p id="total-cursos">0</p>
-      </div>
-
-      <div class="card">
-        <h3>Aulas</h3>
-        <p id="total-aulas">0</p>
+      <div class="quick-actions">
+        <h2>Ações Rápidas</h2>
+        <div class="actions-grid">
+          <a href="professores.html" class="action-btn" data-action="novo-professor">
+            <span class="action-icon"></span>
+            <span>Novo Professor</span>
+          </a>
+          <a href="cursos.html" class="action-btn" data-action="novo-curso">
+            <span class="action-icon"></span>
+            <span>Novo Curso</span>
+          </a>
+          <a href="aulas.html" class="action-btn" data-action="nova-aula">
+            <span class="action-icon"></span>
+            <span>Nova Aula</span>
+          </a>
+          <a href="disciplinas.html" class="action-btn" data-action="nova-disciplina">
+            <span class="action-icon"></span>
+            <span>Nova Disciplina</span>
+          </a>
+        </div>
       </div>
 
     </section>
