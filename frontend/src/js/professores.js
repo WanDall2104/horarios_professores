@@ -1,5 +1,5 @@
 // ===== DADOS EM MEMÓRIA (substituir por chamadas de API depois) =====
-let professores = [];
+let professores = loadData(StorageKeys.PROFESSORES);
 
 const diasSemana = {
   SEGUNDA: 'Segunda-feira',
@@ -12,6 +12,7 @@ const diasSemana = {
 // ===== FUNÇÃO PARA CARREGAR DADOS =====
 async function carregarProfessores() {
   // TODO: Substituir por chamada GET /professores quando o backend estiver pronto
+  professores = loadData(StorageKeys.PROFESSORES);
   renderizarProfessores();
 }
 
@@ -43,6 +44,7 @@ async function salvarProfessor() {
 
   // TODO: Substituir por chamada POST /professores quando o backend estiver pronto
   professores.push(professor);
+  saveData(StorageKeys.PROFESSORES, professores);
 
   // Limpar formulário
   document.getElementById('professor-form').reset();
@@ -58,6 +60,7 @@ async function removerProfessor(id) {
 
   // TODO: Substituir por chamada DELETE /professores/:id quando o backend estiver pronto
   professores = professores.filter(p => p.id !== id);
+  saveData(StorageKeys.PROFESSORES, professores);
   
   renderizarProfessores();
   alert('Professor removido com sucesso!');

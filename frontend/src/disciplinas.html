@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disciplinas — Sistema de Horários</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/disciplinas.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="./assets/unisenaidash.png" alt="Logo UniSENAI" class="sidebar-logo">
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-link" data-icon="dashboard">
+        <i class="nav-icon fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="professores.html" class="nav-link" data-icon="professores">
+        <i class="nav-icon fas fa-chalkboard-user"></i>
+        <span>Professores</span>
+      </a>
+      <a href="cursos.html" class="nav-link" data-icon="cursos">
+        <i class="nav-icon fas fa-book"></i>
+        <span>Cursos</span>
+      </a>
+      <a href="disciplinas.html" class="nav-link active" data-icon="disciplinas">
+        <i class="nav-icon fas fa-graduation-cap"></i>
+        <span>Disciplinas</span>
+      </a>
+      <a href="aulas.html" class="nav-link" data-icon="aulas">
+        <i class="nav-icon fas fa-calendar"></i>
+        <span>Aulas</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">Sair do Sistema</button>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Gestão de Disciplinas</h1>
+        <p class="topbar-subtitle">Cadastre disciplinas vinculadas aos cursos</p>
+      </div>
+      <div class="topbar-right">
+        <span class="user-info" id="user-name">Usuário</span>
+      </div>
+    </header>
+
+    <section class="page-content">
+
+      <div class="content-header">
+        <h2>Nova Disciplina</h2>
+        <p>Preencha os dados abaixo para cadastrar uma disciplina por curso</p>
+      </div>
+
+      <div class="form-card">
+        <form class="disciplina-form" id="disciplina-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nome-disciplina">Nome da Disciplina</label>
+              <input type="text" id="nome-disciplina" placeholder="Ex: Programação Web" required>
+            </div>
+            <div class="form-group">
+              <label for="curso-disciplina">Selecionar Curso</label>
+              <select id="curso-disciplina" required>
+                <option value="">Selecione um curso...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" onclick="salvarDisciplina()">Cadastrar Disciplina</button>
+            <button type="reset" class="btn btn-secondary">Limpar Campos</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="msg-feedback" class="msg-feedback" style="display:none;"></div>
+
+      <div class="table-section">
+        <div class="table-header">
+          <h2>Lista de Disciplinas</h2>
+          <div class="table-info">
+            <span id="total-disciplinas-table" class="badge">0</span>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Disciplina</th>
+                <th>Curso</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-disciplinas"></tbody>
+          </table>
+          <div class="empty-state" id="empty-state">
+            <p>Nenhuma disciplina cadastrada ainda</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="./js/storage.js"></script>
+<script src="./js/disciplinas.js"></script>
+</body>
+</html>

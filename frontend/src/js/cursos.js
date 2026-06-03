@@ -1,5 +1,5 @@
 // ===== DADOS EM MEMÓRIA (substituir por chamadas de API depois) =====
-let cursos = [];
+let cursos = loadData(StorageKeys.CURSOS);
 
 // ===== UTILITÁRIOS =====
 
@@ -14,6 +14,7 @@ function showFeedback(mensagem, tipo = 'success') {
 // ===== CARREGAR CURSOS =====
 async function carregarCursos() {
   // TODO: Substituir por chamada GET /cursos quando o backend estiver pronto
+  cursos = loadData(StorageKeys.CURSOS);
   renderizarCursos();
 }
 
@@ -37,6 +38,7 @@ async function salvarCurso() {
 
   // TODO: Substituir por chamada POST /cursos quando o backend estiver pronto
   cursos.push(curso);
+  saveData(StorageKeys.CURSOS, cursos);
 
   document.getElementById('curso-form').reset();
   renderizarCursos();
@@ -45,13 +47,23 @@ async function salvarCurso() {
 
 // ===== REMOVER CURSO =====
 async function removerCurso(id) {
-  if (!confirm('Tem certeza que deseja remover este curso?')) return;
+  const curso = cursos.find(c => c.id === id);
+  if (!curso) return;
 
-  // TODO: Substituir por chamada DELETE /cursos/:id quando o backend estiver pronto
+  if (!confirm(`Tem certeza que deseja excluir o curso "${curso.nome}"?`)) return;
+
+  const disciplinas = loadData(StorageKeys.DISCIPLINAS);
+  const temDisciplinas = disciplinas.some(d => d.cursoId === id);
+  if (temDisciplinas) {
+    showFeedback('Não é possível excluir: existem disciplinas vinculadas a este curso.', 'error');
+    return;
+  }
+
   cursos = cursos.filter(c => c.id !== id);
+  saveData(StorageKeys.CURSOS, cursos);
 
   renderizarCursos();
-  showFeedback('Curso removido com sucesso.', 'success');
+  showFeedback('Curso excluído com sucesso.', 'success');
 }
 
 // ===== ABRIR MODAL DE EDIÇÃO =====
@@ -94,6 +106,7 @@ async function salvarEdicao() {
     descricao: descricao || '—',
     cargaHoraria: cargaHorariaRaw ? parseInt(cargaHorariaRaw) : null
   };
+  saveData(StorageKeys.CURSOS, cursos);
 
   fecharModal();
   renderizarCursos();
@@ -129,18 +142,15 @@ function renderizarCursos() {
       <td>${cargaLabel}</td>
       <td class="acoes-cell">
         <button class="btn-icon btn-edit" onclick="abrirEdicao('${curso.id}')" title="Editar Curso">
-          <i data-lucide="pencil"></i>
+          <i class="fas fa-pen"></i>
         </button>
-        <button class="btn-icon btn-danger" onclick="removerCurso('${curso.id}')" title="Remover Curso">
-          <i data-lucide="trash-2"></i>
+        <button class="btn-icon btn-danger" onclick="removerCurso('${curso.id}')" title="Excluir Curso">
+          <i class="fas fa-trash"></i>
         </button>
       </td>
     `;
     tabela.appendChild(row);
   });
-
-  // Reativar ícones Lucide após renderizar dinamicamente
-  if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 // ===== LOGOUT =====

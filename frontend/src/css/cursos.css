@@ -361,24 +361,20 @@
   display: block;
 }
 
-.btn-edit i,
-.btn-edit svg {
-  color: var(--blue);
-  stroke: var(--blue);
-}
-
-.btn-icon.btn-danger i,
-.btn-icon.btn-danger svg {
+.btn-icon.btn-danger {
   color: var(--error);
-  stroke: var(--error);
-}
-
-.btn-icon:hover {
-  background: rgba(0, 119, 200, 0.1);
 }
 
 .btn-icon.btn-danger:hover {
   background: rgba(192, 57, 43, 0.1);
+}
+
+.btn-icon.btn-edit {
+  color: var(--blue);
+}
+
+.btn-icon.btn-edit:hover {
+  background: rgba(0, 119, 200, 0.1);
 }
 
 .acoes-cell {

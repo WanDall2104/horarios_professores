@@ -1,47 +1,161 @@
 <!DOCTYPE html>
-    <section class="form-section">
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aulas / Horários — Sistema de Horários</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/aulas.css">
+</head>
+<body>
 
-      <select id="professor">
-        <option>Professor</option>
-      </select>
+<div class="layout">
 
-      <select id="curso">
-        <option>Curso</option>
-      </select>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="./assets/unisenaidash.png" alt="Logo UniSENAI" class="sidebar-logo">
+    </div>
 
-      <select id="disciplina">
-        <option>Disciplina</option>
-      </select>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-link" data-icon="dashboard">
+        <i class="nav-icon fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="professores.html" class="nav-link" data-icon="professores">
+        <i class="nav-icon fas fa-chalkboard-user"></i>
+        <span>Professores</span>
+      </a>
+      <a href="cursos.html" class="nav-link" data-icon="cursos">
+        <i class="nav-icon fas fa-book"></i>
+        <span>Cursos</span>
+      </a>
+      <a href="disciplinas.html" class="nav-link" data-icon="disciplinas">
+        <i class="nav-icon fas fa-graduation-cap"></i>
+        <span>Disciplinas</span>
+      </a>
+      <a href="aulas.html" class="nav-link active" data-icon="aulas">
+        <i class="nav-icon fas fa-calendar"></i>
+        <span>Aulas</span>
+      </a>
+    </nav>
 
-      <select id="dia-semana">
-        <option>Dia da Semana</option>
-        <option>Segunda</option>
-        <option>Terça</option>
-        <option>Quarta</option>
-        <option>Quinta</option>
-        <option>Sexta</option>
-      </select>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">Sair do Sistema</button>
+    </div>
+  </aside>
 
-      <button onclick="criarAula()">
-        Criar Aula
-      </button>
+  <main class="content">
 
-    </section>
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Aulas e Horários</h1>
+        <p class="topbar-subtitle">Vincule professor, disciplina, curso, dia, turma e campus</p>
+      </div>
+      <div class="topbar-right">
+        <span class="user-info" id="user-name">Usuário</span>
+      </div>
+    </header>
 
-    <section class="table-section">
+    <section class="page-content">
 
-      <table>
-        <thead>
-          <tr>
-            <th>Professor</th>
-            <th>Curso</th>
-            <th>Disciplina</th>
-            <th>Dia</th>
-          </tr>
-        </thead>
+      <div class="content-header">
+        <h2>Nova Aula / Horário</h2>
+        <p>Preencha todos os campos para vincular professor, disciplina e horário</p>
+      </div>
 
-        <tbody id="tabela-aulas"></tbody>
-      </table>
+      <div class="form-card">
+        <form class="aula-form" id="aula-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="professor">Selecionar Professor</label>
+              <select id="professor" required>
+                <option value="">Selecione um professor...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="curso">Selecionar Curso</label>
+              <select id="curso" required onchange="atualizarDisciplinasPorCurso()">
+                <option value="">Selecione um curso...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="disciplina">Selecionar Disciplina</label>
+              <select id="disciplina" required>
+                <option value="">Selecione uma disciplina...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="dia-semana">Dia da Semana</label>
+              <select id="dia-semana" required>
+                <option value="">Selecione o dia...</option>
+                <option value="SEGUNDA">Segunda-feira</option>
+                <option value="TERCA">Terça-feira</option>
+                <option value="QUARTA">Quarta-feira</option>
+                <option value="QUINTA">Quinta-feira</option>
+                <option value="SEXTA">Sexta-feira</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="periodo-turma">Período / Turma</label>
+              <input type="text" id="periodo-turma" placeholder="Ex: Manhã - Turma A" required>
+            </div>
+
+            <div class="form-group">
+              <label for="campus">Campus</label>
+              <select id="campus" required>
+                <option value="">Selecione o campus...</option>
+                <option value="São José dos Pinhais">São José dos Pinhais</option>
+                <option value="Curitiba">Curitiba</option>
+                <option value="Pinhais">Pinhais</option>
+                <option value="Araucária">Araucária</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" onclick="criarAula()">Vincular Aula</button>
+            <button type="reset" class="btn btn-secondary" onclick="atualizarDisciplinasPorCurso()">Limpar Campos</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="msg-feedback" class="msg-feedback" style="display:none;"></div>
+
+      <div class="table-section">
+        <div class="table-header">
+          <h2>Horários Cadastrados</h2>
+          <div class="table-info">
+            <span id="total-aulas-table" class="badge">0</span>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Professor</th>
+                <th>Disciplina</th>
+                <th>Curso</th>
+                <th>Dia</th>
+                <th>Período / Turma</th>
+                <th>Campus</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-aulas"></tbody>
+          </table>
+          <div class="empty-state" id="empty-state">
+            <p>Nenhuma aula cadastrada ainda</p>
+          </div>
+        </div>
+      </div>
 
     </section>
 
@@ -49,6 +163,7 @@
 
 </div>
 
+<script src="./js/storage.js"></script>
 <script src="./js/aulas.js"></script>
 </body>
 </html>
