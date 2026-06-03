@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — Sistema de Horários</title>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/dashboard.css">
 </head>
@@ -19,23 +20,23 @@
 
     <nav class="sidebar-nav">
       <a href="dashboard.html" class="nav-link active" data-icon="dashboard">
-        <span class="nav-icon"></span>
+        <i class="nav-icon fas fa-chart-line"></i>
         <span>Dashboard</span>
       </a>
       <a href="professores.html" class="nav-link" data-icon="professores">
-        <span class="nav-icon"></span>
+        <i class="nav-icon fas fa-chalkboard-user"></i>
         <span>Professores</span>
       </a>
       <a href="cursos.html" class="nav-link" data-icon="cursos">
-        <span class="nav-icon"></span>
+        <i class="nav-icon fas fa-book"></i>
         <span>Cursos</span>
       </a>
       <a href="disciplinas.html" class="nav-link" data-icon="disciplinas">
-        <span class="nav-icon"></span>
+        <i class="nav-icon fas fa-graduation-cap"></i>
         <span>Disciplinas</span>
       </a>
       <a href="aulas.html" class="nav-link" data-icon="aulas">
-        <span class="nav-icon"></span>
+        <i class="nav-icon fas fa-calendar"></i>
         <span>Aulas</span>
       </a>
     </nav>
@@ -61,7 +62,7 @@
       
       <div class="stats-grid">
         <div class="stat-card" data-stat="professores">
-          <div class="stat-icon"></div>
+          <i class="stat-icon fas fa-chalkboard-user"></i>
           <div class="stat-info">
             <h3>Professores</h3>
             <p class="stat-value" id="total-professores">0</p>
@@ -69,7 +70,7 @@
         </div>
 
         <div class="stat-card" data-stat="cursos">
-          <div class="stat-icon"></div>
+          <i class="stat-icon fas fa-book"></i>
           <div class="stat-info">
             <h3>Cursos</h3>
             <p class="stat-value" id="total-cursos">0</p>
@@ -77,7 +78,7 @@
         </div>
 
         <div class="stat-card" data-stat="aulas">
-          <div class="stat-icon"></div>
+          <i class="stat-icon fas fa-calendar"></i>
           <div class="stat-info">
             <h3>Aulas</h3>
             <p class="stat-value" id="total-aulas">0</p>
@@ -85,7 +86,7 @@
         </div>
 
         <div class="stat-card" data-stat="disciplinas">
-          <div class="stat-icon"></div>
+          <i class="stat-icon fas fa-graduation-cap"></i>
           <div class="stat-info">
             <h3>Disciplinas</h3>
             <p class="stat-value" id="total-disciplinas">0</p>
@@ -97,19 +98,19 @@
         <h2>Ações Rápidas</h2>
         <div class="actions-grid">
           <a href="professores.html" class="action-btn" data-action="novo-professor">
-            <span class="action-icon"></span>
+            <i class="action-icon fas fa-user-plus"></i>
             <span>Novo Professor</span>
           </a>
           <a href="cursos.html" class="action-btn" data-action="novo-curso">
-            <span class="action-icon"></span>
+            <i class="action-icon fas fa-book-open"></i>
             <span>Novo Curso</span>
           </a>
           <a href="aulas.html" class="action-btn" data-action="nova-aula">
-            <span class="action-icon"></span>
+            <i class="action-icon fas fa-calendar-plus"></i>
             <span>Nova Aula</span>
           </a>
           <a href="disciplinas.html" class="action-btn" data-action="nova-disciplina">
-            <span class="action-icon"></span>
+            <i class="action-icon fas fa-plus-circle"></i>
             <span>Nova Disciplina</span>
           </a>
         </div>

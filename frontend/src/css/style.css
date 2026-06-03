@@ -16,7 +16,7 @@
     body {
       background: var(--light);
       color: var(--text);
-      font-family: 'Open Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -48,6 +48,7 @@
     .header {
       text-align: center;
       margin-bottom: 28px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .header img {
