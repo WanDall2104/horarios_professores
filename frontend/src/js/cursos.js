@@ -21,6 +21,7 @@ async function carregarCursos() {
 // ===== SALVAR CURSO =====
 async function salvarCurso() {
   const nome = document.getElementById('nome-curso').value.trim();
+  const periodo = document.getElementById('periodo-curso').value.trim();
   const descricao = document.getElementById('descricao-curso').value.trim();
   const cargaHorariaRaw = document.getElementById('carga-horaria').value.trim();
 
@@ -32,6 +33,7 @@ async function salvarCurso() {
   const curso = {
     id: 'curso-' + Date.now(),
     nome,
+    periodo: periodo || '',
     descricao: descricao || '—',
     cargaHoraria: cargaHorariaRaw ? parseInt(cargaHorariaRaw) : null
   };
@@ -73,6 +75,7 @@ function abrirEdicao(id) {
 
   document.getElementById('edit-id').value = curso.id;
   document.getElementById('edit-nome').value = curso.nome;
+  document.getElementById('edit-periodo').value = curso.periodo || '';
   document.getElementById('edit-descricao').value = curso.descricao === '—' ? '' : curso.descricao;
   document.getElementById('edit-carga').value = curso.cargaHoraria || '';
 
@@ -88,6 +91,7 @@ function fecharModal() {
 async function salvarEdicao() {
   const id = document.getElementById('edit-id').value;
   const nome = document.getElementById('edit-nome').value.trim();
+  const periodo = document.getElementById('edit-periodo').value.trim();
   const descricao = document.getElementById('edit-descricao').value.trim();
   const cargaHorariaRaw = document.getElementById('edit-carga').value.trim();
 
@@ -103,6 +107,7 @@ async function salvarEdicao() {
   cursos[index] = {
     ...cursos[index],
     nome,
+    periodo,
     descricao: descricao || '—',
     cargaHoraria: cargaHorariaRaw ? parseInt(cargaHorariaRaw) : null
   };
@@ -134,10 +139,15 @@ function renderizarCursos() {
       ? `<span class="carga-badge">${curso.cargaHoraria}h</span>`
       : '<span style="color:var(--muted);font-size:12px;">—</span>';
 
+    const periodoLabel = curso.periodo
+      ? `<span class="periodo-badge">${curso.periodo}</span>`
+      : '<span style="color:var(--muted);font-size:12px;">—</span>';
+
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${curso.id}</td>
       <td><strong>${curso.nome}</strong></td>
+      <td>${periodoLabel}</td>
       <td><span class="descricao-cell" title="${curso.descricao}">${curso.descricao}</span></td>
       <td>${cargaLabel}</td>
       <td class="acoes-cell">

@@ -122,6 +122,37 @@
 
 </div>
 
+<!-- MODAL DE EDIÇÃO DE DISCIPLINA -->
+<div class="modal" id="modal-edicao-disciplina">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Editar Disciplina</h2>
+      <button class="btn-close" onclick="fecharModalDisciplina()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="disciplina-form">
+        <input type="hidden" id="edit-disc-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-disc-nome">Nome da Disciplina</label>
+            <input type="text" id="edit-disc-nome" placeholder="Ex: Programação Web" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-disc-curso">Selecionar Curso</label>
+            <select id="edit-disc-curso" required>
+              <option value="">Selecione um curso...</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModalDisciplina()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicaoDisciplina()">Salvar Alterações</button>
+    </div>
+  </div>
+</div>
+
 <script src="./js/storage.js"></script>
 <script src="./js/disciplinas.js"></script>
 </body>

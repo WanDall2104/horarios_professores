@@ -151,6 +151,66 @@
 
 </div>
 
+<!-- MODAL DE EDIÇÃO DE PROFESSOR -->
+<div class="modal" id="modal-edicao-professor">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Editar Professor</h2>
+      <button class="btn-close" onclick="fecharModalProfessor()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="professor-form">
+        <input type="hidden" id="edit-prof-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-prof-nome">Nome Completo</label>
+            <input type="text" id="edit-prof-nome" placeholder="Digite o nome completo" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-prof-email">E-mail</label>
+            <input type="email" id="edit-prof-email" placeholder="Digite o e-mail" required>
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Disponibilidade de Dias</h3>
+          <p class="form-section-hint">Selecione os dias em que o professor pode dar aula</p>
+          <div class="disponibilidade-grid" id="edit-prof-disponibilidade">
+            <label class="checkbox-label">
+              <input type="checkbox" name="edit-disponibilidade" value="SEGUNDA">
+              <span class="checkbox-custom"><i class="fas fa-check"></i></span>
+              Segunda-feira
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="edit-disponibilidade" value="TERCA">
+              <span class="checkbox-custom"><i class="fas fa-check"></i></span>
+              Terça-feira
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="edit-disponibilidade" value="QUARTA">
+              <span class="checkbox-custom"><i class="fas fa-check"></i></span>
+              Quarta-feira
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="edit-disponibilidade" value="QUINTA">
+              <span class="checkbox-custom"><i class="fas fa-check"></i></span>
+              Quinta-feira
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="edit-disponibilidade" value="SEXTA">
+              <span class="checkbox-custom"><i class="fas fa-check"></i></span>
+              Sexta-feira
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModalProfessor()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicaoProfessor()">Salvar Alterações</button>
+    </div>
+  </div>
+</div>
+
 <script src="./js/storage.js"></script>
 <script src="./js/professores.js"></script>
 </body>

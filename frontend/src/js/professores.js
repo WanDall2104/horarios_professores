@@ -66,6 +66,60 @@ async function removerProfessor(id) {
   alert('Professor removido com sucesso!');
 }
 
+// ===== EDIÇÃO DE PROFESSOR =====
+function abrirEdicaoProfessor(id) {
+  const professor = professores.find(p => p.id === id);
+  if (!professor) return;
+
+  document.getElementById('edit-prof-id').value = professor.id;
+  document.getElementById('edit-prof-nome').value = professor.nome;
+  document.getElementById('edit-prof-email').value = professor.email;
+
+  const checkboxes = document.querySelectorAll('#edit-prof-disponibilidade input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    cb.checked = professor.disponibilidade.includes(cb.value);
+  });
+
+  document.getElementById('modal-edicao-professor').classList.add('open');
+}
+
+function fecharModalProfessor() {
+  document.getElementById('modal-edicao-professor').classList.remove('open');
+}
+
+async function salvarEdicaoProfessor() {
+  const id = document.getElementById('edit-prof-id').value;
+  const nome = document.getElementById('edit-prof-nome').value.trim();
+  const email = document.getElementById('edit-prof-email').value.trim();
+  const disponibilidadeCheckboxes = document.querySelectorAll('#edit-prof-disponibilidade input[type="checkbox"]:checked');
+
+  if (!nome || !email) {
+    alert('Por favor, preencha todos os campos obrigatórios');
+    return;
+  }
+
+  if (disponibilidadeCheckboxes.length === 0) {
+    alert('Por favor, selecione pelo menos um dia de disponibilidade');
+    return;
+  }
+
+  const disponibilidade = Array.from(disponibilidadeCheckboxes).map(cb => cb.value);
+  const index = professores.findIndex(p => p.id === id);
+  if (index === -1) return;
+
+  professores[index] = { ...professores[index], nome, email, disponibilidade };
+  saveData(StorageKeys.PROFESSORES, professores);
+
+  fecharModalProfessor();
+  renderizarProfessores();
+  alert('Professor atualizado com sucesso!');
+}
+
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('modal-edicao-professor');
+  if (e.target === modal) fecharModalProfessor();
+});
+
 // ===== RENDERIZAÇÃO =====
 
 // Renderizar lista de professores
@@ -100,8 +154,11 @@ function renderizarProfessores() {
         </div>
       </td>
       <td class="acoes-cell">
+        <button class="btn-icon btn-edit" onclick="abrirEdicaoProfessor('${prof.id}')" title="Editar Professor">
+          <i class="fas fa-pen"></i>
+        </button>
         <button class="btn-icon btn-danger" onclick="removerProfessor('${prof.id}')" title="Remover Professor">
-          🗑️
+          <i class="fas fa-trash"></i>
         </button>
       </td>
     `;

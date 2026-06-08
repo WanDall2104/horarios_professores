@@ -128,6 +128,31 @@
 
       <div id="msg-feedback" class="msg-feedback" style="display:none;"></div>
 
+      <!-- GRADE SEMANAL -->
+      <div class="grade-section">
+        <div class="grade-header">
+          <div class="grade-header-left">
+            <h2><i class="fas fa-calendar-alt"></i> Grade Semanal</h2>
+            <p>Visualize a grade de horários por curso e turma</p>
+          </div>
+          <div class="grade-header-right">
+            <div class="grade-filters">
+              <select id="grade-filtro-curso" onchange="atualizarFiltroTurma(); renderizarGradeSemanal();">
+                <option value="">Todos os cursos</option>
+              </select>
+              <select id="grade-filtro-turma" onchange="renderizarGradeSemanal()">
+                <option value="">Todas as turmas</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="grade-container" id="grade-container">
+          <div class="grade-empty">
+            <p>Selecione um curso para visualizar a grade semanal</p>
+          </div>
+        </div>
+      </div>
+
       <div class="table-section">
         <div class="table-header">
           <h2>Horários Cadastrados</h2>
@@ -161,6 +186,71 @@
 
   </main>
 
+</div>
+
+<!-- MODAL DE EDIÇÃO DE AULA -->
+<div class="modal" id="modal-edicao-aula">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Editar Aula / Horário</h2>
+      <button class="btn-close" onclick="fecharModalAula()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="aula-form">
+        <input type="hidden" id="edit-aula-id">
+        <div id="edit-aula-msg" class="msg-feedback" style="display:none;"></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="edit-aula-professor">Professor</label>
+            <select id="edit-aula-professor" required>
+              <option value="">Selecione um professor...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-aula-curso">Curso</label>
+            <select id="edit-aula-curso" required onchange="atualizarDisciplinasEdit()">
+              <option value="">Selecione um curso...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-aula-disciplina">Disciplina</label>
+            <select id="edit-aula-disciplina" required>
+              <option value="">Selecione uma disciplina...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-aula-dia">Dia da Semana</label>
+            <select id="edit-aula-dia" required>
+              <option value="">Selecione o dia...</option>
+              <option value="SEGUNDA">Segunda-feira</option>
+              <option value="TERCA">Terça-feira</option>
+              <option value="QUARTA">Quarta-feira</option>
+              <option value="QUINTA">Quinta-feira</option>
+              <option value="SEXTA">Sexta-feira</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-aula-periodo">Período / Turma</label>
+            <input type="text" id="edit-aula-periodo" placeholder="Ex: Manhã - Turma A" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-aula-campus">Campus</label>
+            <select id="edit-aula-campus" required>
+              <option value="">Selecione o campus...</option>
+              <option value="São José dos Pinhais">São José dos Pinhais</option>
+              <option value="Curitiba">Curitiba</option>
+              <option value="Pinhais">Pinhais</option>
+              <option value="Araucária">Araucária</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModalAula()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicaoAula()">Salvar Alterações</button>
+    </div>
+  </div>
 </div>
 
 <script src="./js/storage.js"></script>

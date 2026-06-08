@@ -400,6 +400,10 @@
   padding: 20px;
 }
 
+.modal.open {
+  display: flex;
+}
+
 .modal-content {
   background: var(--white);
   border-radius: 8px;

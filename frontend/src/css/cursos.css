@@ -324,6 +324,17 @@
   white-space: nowrap;
 }
 
+.periodo-badge {
+  display: inline-block;
+  background: rgba(0, 180, 120, 0.1);
+  color: #1a8a5c;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .empty-state {
   display: none;
   padding: 40px 28px;

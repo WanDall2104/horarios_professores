@@ -17,9 +17,9 @@ function showFeedback(mensagem, tipo = 'success') {
   setTimeout(() => { el.style.display = 'none'; }, 3500);
 }
 
-function carregarCursosDropdown() {
+function carregarCursosDropdown(selectId = 'curso-disciplina') {
   cursos = loadData(StorageKeys.CURSOS);
-  const select = document.getElementById('curso-disciplina');
+  const select = document.getElementById(selectId);
 
   select.innerHTML = '<option value="">Selecione um curso...</option>';
   cursos.forEach(curso => {
@@ -28,6 +28,10 @@ function carregarCursosDropdown() {
     option.textContent = curso.nome;
     select.appendChild(option);
   });
+}
+
+function carregarCursosDropdownEdit() {
+  carregarCursosDropdown('edit-disc-curso');
 }
 
 async function carregarDisciplinas() {
@@ -84,6 +88,64 @@ async function removerDisciplina(id) {
   showFeedback('Disciplina removida com sucesso.', 'success');
 }
 
+// ===== EDIÇÃO DE DISCIPLINA =====
+function abrirEdicaoDisciplina(id) {
+  const disciplina = disciplinas.find(d => d.id === id);
+  if (!disciplina) return;
+
+  document.getElementById('edit-disc-id').value = disciplina.id;
+  document.getElementById('edit-disc-nome').value = disciplina.nome;
+
+  carregarCursosDropdownEdit();
+  document.getElementById('edit-disc-curso').value = disciplina.cursoId;
+
+  document.getElementById('modal-edicao-disciplina').classList.add('open');
+}
+
+function fecharModalDisciplina() {
+  document.getElementById('modal-edicao-disciplina').classList.remove('open');
+}
+
+async function salvarEdicaoDisciplina() {
+  const id = document.getElementById('edit-disc-id').value;
+  const nome = document.getElementById('edit-disc-nome').value.trim();
+  const cursoId = document.getElementById('edit-disc-curso').value;
+
+  if (!nome) {
+    showFeedback('Por favor, informe o nome da disciplina.', 'error');
+    return;
+  }
+
+  if (!cursoId) {
+    showFeedback('Por favor, selecione um curso.', 'error');
+    return;
+  }
+
+  const duplicada = disciplinas.some(
+    d => d.id !== id && d.nome.toLowerCase() === nome.toLowerCase() && d.cursoId === cursoId
+  );
+
+  if (duplicada) {
+    showFeedback('Esta disciplina já está cadastrada para o curso selecionado.', 'error');
+    return;
+  }
+
+  const index = disciplinas.findIndex(d => d.id === id);
+  if (index === -1) return;
+
+  disciplinas[index] = { ...disciplinas[index], nome, cursoId };
+  saveData(StorageKeys.DISCIPLINAS, disciplinas);
+
+  fecharModalDisciplina();
+  renderizarDisciplinas();
+  showFeedback('Disciplina atualizada com sucesso!', 'success');
+}
+
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('modal-edicao-disciplina');
+  if (e.target === modal) fecharModalDisciplina();
+});
+
 function renderizarDisciplinas() {
   const tabela = document.getElementById('tabela-disciplinas');
   const emptyState = document.getElementById('empty-state');
@@ -106,6 +168,9 @@ function renderizarDisciplinas() {
       <td><strong>${disciplina.nome}</strong></td>
       <td><span class="curso-badge">${getNomeCurso(disciplina.cursoId, cursos)}</span></td>
       <td class="acoes-cell">
+        <button class="btn-icon btn-edit" onclick="abrirEdicaoDisciplina('${disciplina.id}')" title="Editar Disciplina">
+          <i class="fas fa-pen"></i>
+        </button>
         <button class="btn-icon btn-danger" onclick="removerDisciplina('${disciplina.id}')" title="Remover Disciplina">
           <i class="fas fa-trash"></i>
         </button>
