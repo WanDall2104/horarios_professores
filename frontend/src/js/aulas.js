@@ -21,14 +21,14 @@ function showFeedback(mensagem, tipo = 'success') {
   setTimeout(() => { el.style.display = 'none'; }, 3500);
 }
 
-function preencherSelect(selectId, items, labelKey, placeholder) {
+function preencherSelect(selectId, items, labelKey, placeholder, labelFormatter) {
   const select = document.getElementById(selectId);
   select.innerHTML = `<option value="">${placeholder}</option>`;
 
   items.forEach(item => {
     const option = document.createElement('option');
     option.value = item.id;
-    option.textContent = item[labelKey];
+    option.textContent = labelFormatter ? labelFormatter(item) : item[labelKey];
     select.appendChild(option);
   });
 }
@@ -39,7 +39,7 @@ function carregarDropdowns() {
   disciplinas = loadData(StorageKeys.DISCIPLINAS);
 
   preencherSelect('professor', professores, 'nome', 'Selecione um professor...');
-  preencherSelect('curso', cursos, 'nome', 'Selecione um curso...');
+  preencherSelect('curso', cursos, 'nome', 'Selecione um curso...', (c) => c.periodo ? `${c.nome} — ${c.periodo}` : c.nome);
   atualizarDisciplinasPorCurso();
 }
 
@@ -49,13 +49,19 @@ function carregarDropdownsEdit() {
   disciplinas = loadData(StorageKeys.DISCIPLINAS);
 
   preencherSelect('edit-aula-professor', professores, 'nome', 'Selecione um professor...');
-  preencherSelect('edit-aula-curso', cursos, 'nome', 'Selecione um curso...');
+  preencherSelect('edit-aula-curso', cursos, 'nome', 'Selecione um curso...', (c) => c.periodo ? `${c.nome} — ${c.periodo}` : c.nome);
   atualizarDisciplinasEdit();
 }
 
 function atualizarDisciplinasEdit() {
   const cursoId = document.getElementById('edit-aula-curso').value;
   const selectDisciplina = document.getElementById('edit-aula-disciplina');
+  const periodoTurmaInput = document.getElementById('edit-aula-periodo');
+
+  const curso = findById(cursos, cursoId);
+  if (curso && curso.periodo) {
+    periodoTurmaInput.value = curso.periodo;
+  }
 
   const filtradas = cursoId
     ? disciplinas.filter(d => d.cursoId === cursoId)
@@ -74,6 +80,14 @@ function atualizarDisciplinasEdit() {
 function atualizarDisciplinasPorCurso() {
   const cursoId = document.getElementById('curso').value;
   const selectDisciplina = document.getElementById('disciplina');
+  const periodoTurmaInput = document.getElementById('periodo-turma');
+
+  const curso = findById(cursos, cursoId);
+  if (curso && curso.periodo) {
+    periodoTurmaInput.value = curso.periodo;
+  } else {
+    periodoTurmaInput.value = '';
+  }
 
   const filtradas = cursoId
     ? disciplinas.filter(d => d.cursoId === cursoId)
@@ -187,18 +201,19 @@ async function criarAula() {
   document.getElementById('aula-form').reset();
   carregarDropdowns();
   renderizarAulas();
-  carregarCursosGrade();
+  carregarFiltrosGrade();
   renderizarGradeSemanal();
   showFeedback('Aula vinculada com sucesso!', 'success');
 }
 
 async function removerAula(id) {
-  if (!confirm('Tem certeza que deseja remover esta aula?')) return;
+  if (!await showConfirm('Tem certeza que deseja remover esta aula?')) return;
 
   aulas = aulas.filter(a => a.id !== id);
   saveData(StorageKeys.AULAS, aulas);
 
   renderizarAulas();
+  carregarFiltrosGrade();
   renderizarGradeSemanal();
   showFeedback('Aula removida com sucesso.', 'success');
 }
@@ -275,50 +290,17 @@ async function salvarEdicaoAula() {
 
   fecharModalAula();
   renderizarAulas();
+  carregarFiltrosGrade();
   renderizarGradeSemanal();
   showFeedback('Aula atualizada com sucesso!', 'success');
 }
 
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
   const modal = document.getElementById('modal-edicao-aula');
   if (e.target === modal) fecharModalAula();
 });
 
 // ===== GRADE SEMANAL =====
-function carregarCursosGrade() {
-  cursos = loadData(StorageKeys.CURSOS);
-  const select = document.getElementById('grade-filtro-curso');
-  select.innerHTML = '<option value="">Todos os cursos</option>';
-  cursos.forEach(curso => {
-    const option = document.createElement('option');
-    option.value = curso.id;
-    option.textContent = curso.nome;
-    select.appendChild(option);
-  });
-}
-
-function atualizarFiltroTurma() {
-  aulas = loadData(StorageKeys.AULAS);
-  const cursoId = document.getElementById('grade-filtro-curso').value;
-  const selectTurma = document.getElementById('grade-filtro-turma');
-
-  let aulasBase = cursoId ? aulas.filter(a => a.cursoId === cursoId) : aulas;
-  const turmas = [...new Set(aulasBase.map(a => a.periodoTurma).filter(Boolean))].sort();
-
-  const valorAnterior = selectTurma.value;
-  selectTurma.innerHTML = '<option value="">Todas as turmas</option>';
-  turmas.forEach(turma => {
-    const option = document.createElement('option');
-    option.value = turma;
-    option.textContent = turma;
-    selectTurma.appendChild(option);
-  });
-
-  if (turmas.includes(valorAnterior)) {
-    selectTurma.value = valorAnterior;
-  }
-}
-
 function extrairPeriodo(periodoTurma) {
   if (!periodoTurma) return '';
   const partes = periodoTurma.split(/[-–]/);
@@ -331,10 +313,72 @@ function extrairTurma(periodoTurma) {
   return partes[1] ? partes[1].trim() : '';
 }
 
+function carregarFiltrosGrade() {
+  aulas = loadData(StorageKeys.AULAS);
+  cursos = loadData(StorageKeys.CURSOS);
+  professores = loadData(StorageKeys.PROFESSORES);
+  disciplinas = loadData(StorageKeys.DISCIPLINAS);
+
+  preencherSelect('grade-filtro-curso', cursos, 'nome', 'Todos os cursos', (c) => c.periodo ? `${c.nome} — ${c.periodo}` : c.nome);
+  preencherSelect('grade-filtro-professor', professores, 'nome', 'Todos os professores');
+  preencherSelect('grade-filtro-campus', [...new Set(aulas.map(a => a.campus).filter(Boolean))].sort().map(n => ({ id: n, nome: n })), 'nome', 'Todos os campus');
+
+  atualizarFiltrosDependentes();
+}
+
+function atualizarFiltrosDependentes() {
+  aulas = loadData(StorageKeys.AULAS);
+  cursos = loadData(StorageKeys.CURSOS);
+  disciplinas = loadData(StorageKeys.DISCIPLINAS);
+
+  const cursoId = document.getElementById('grade-filtro-curso').value;
+  let aulasBase = cursoId ? aulas.filter(a => a.cursoId === cursoId) : aulas;
+
+  const periodos = [...new Set(aulasBase.map(a => extrairPeriodo(a.periodoTurma)).filter(Boolean))].sort();
+  const turmas = [...new Set(aulasBase.map(a => extrairTurma(a.periodoTurma)).filter(Boolean))].sort();
+  let disciplinasBase = cursoId ? disciplinas.filter(d => d.cursoId === cursoId) : disciplinas;
+
+  manterValorAnterior('grade-filtro-periodo', periodos, 'Todos os períodos');
+  manterValorAnterior('grade-filtro-turma', turmas, 'Todas as turmas');
+
+  const selectDisc = document.getElementById('grade-filtro-disciplina');
+  const valorDiscAnterior = selectDisc.value;
+  selectDisc.innerHTML = '<option value="">Todas as disciplinas</option>';
+  disciplinasBase.forEach(d => {
+    const option = document.createElement('option');
+    option.value = d.id;
+    option.textContent = d.nome;
+    selectDisc.appendChild(option);
+  });
+  if (disciplinasBase.some(d => d.id === valorDiscAnterior)) {
+    selectDisc.value = valorDiscAnterior;
+  }
+}
+
+function manterValorAnterior(selectId, valores, placeholder) {
+  const select = document.getElementById(selectId);
+  const valorAnterior = select.value;
+  select.innerHTML = `<option value="">${placeholder}</option>`;
+  valores.forEach(v => {
+    const option = document.createElement('option');
+    option.value = v;
+    option.textContent = v;
+    select.appendChild(option);
+  });
+  if (valores.includes(valorAnterior)) {
+    select.value = valorAnterior;
+  }
+}
+
 function renderizarGradeSemanal() {
   const container = document.getElementById('grade-container');
   const cursoId = document.getElementById('grade-filtro-curso').value;
+  const periodoFiltro = document.getElementById('grade-filtro-periodo').value;
   const turmaFiltro = document.getElementById('grade-filtro-turma').value;
+  const professorId = document.getElementById('grade-filtro-professor').value;
+  const disciplinaId = document.getElementById('grade-filtro-disciplina').value;
+  const campusFiltro = document.getElementById('grade-filtro-campus').value;
+  const diaFiltro = document.getElementById('grade-filtro-dia').value;
 
   aulas = loadData(StorageKeys.AULAS);
   professores = loadData(StorageKeys.PROFESSORES);
@@ -342,21 +386,20 @@ function renderizarGradeSemanal() {
   disciplinas = loadData(StorageKeys.DISCIPLINAS);
 
   let aulasFiltradas = aulas;
-  if (cursoId) {
-    aulasFiltradas = aulasFiltradas.filter(a => a.cursoId === cursoId);
-  }
-  if (turmaFiltro) {
-    aulasFiltradas = aulasFiltradas.filter(a => a.periodoTurma === turmaFiltro);
-  }
+
+  if (cursoId) aulasFiltradas = aulasFiltradas.filter(a => a.cursoId === cursoId);
+  if (periodoFiltro) aulasFiltradas = aulasFiltradas.filter(a => extrairPeriodo(a.periodoTurma) === periodoFiltro);
+  if (turmaFiltro) aulasFiltradas = aulasFiltradas.filter(a => extrairTurma(a.periodoTurma) === turmaFiltro);
+  if (professorId) aulasFiltradas = aulasFiltradas.filter(a => a.professorId === professorId);
+  if (disciplinaId) aulasFiltradas = aulasFiltradas.filter(a => a.disciplinaId === disciplinaId);
+  if (campusFiltro) aulasFiltradas = aulasFiltradas.filter(a => a.campus === campusFiltro);
+  if (diaFiltro) aulasFiltradas = aulasFiltradas.filter(a => a.diaSemana === diaFiltro);
 
   const diasOrdem = ['SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA'];
   const diasNomes = { SEGUNDA: 'Segunda', TERCA: 'Terça', QUARTA: 'Quarta', QUINTA: 'Quinta', SEXTA: 'Sexta' };
 
   if (aulasFiltradas.length === 0) {
-    let msg = 'Nenhuma aula cadastrada';
-    if (cursoId) msg += ' para este curso';
-    if (turmaFiltro) msg += ' nesta turma';
-    container.innerHTML = `<div class="grade-empty"><p>${msg}.</p></div>`;
+    container.innerHTML = '<div class="grade-empty"><p>Nenhuma aula encontrada com os filtros selecionados.</p></div>';
     return;
   }
 
@@ -451,7 +494,7 @@ function renderizarAulas() {
     row.innerHTML = `
       <td>${getNomeProfessor(aula.professorId, professores)}</td>
       <td><strong>${getNomeDisciplina(aula.disciplinaId, disciplinas)}</strong></td>
-      <td>${getNomeCurso(aula.cursoId, cursos)}</td>
+      <td>${getNomeCursoPeriodo(aula.cursoId, cursos)}</td>
       <td><span class="dia-badge">${diasSemana[aula.diaSemana] || aula.diaSemana}</span></td>
       <td>${aula.periodoTurma || '—'}</td>
       <td>${aula.campus || '—'}</td>
@@ -468,20 +511,19 @@ function renderizarAulas() {
   });
 }
 
-function logout() {
-  if (confirm('Tem certeza que deseja sair do sistema?')) {
+async function logout() {
+  if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const userName = localStorage.getItem('userName') || 'Usuário';
   document.getElementById('user-name').textContent = userName;
 
   carregarDropdowns();
   carregarAulas();
-  carregarCursosGrade();
-  atualizarFiltroTurma();
+  carregarFiltrosGrade();
   renderizarGradeSemanal();
 });

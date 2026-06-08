@@ -1,5 +1,5 @@
-function logout() {
-  if (confirm('Tem certeza que deseja sair do sistema?')) {
+async function logout() {
+  if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
     window.location.href = 'login.html';

@@ -52,7 +52,7 @@ async function removerCurso(id) {
   const curso = cursos.find(c => c.id === id);
   if (!curso) return;
 
-  if (!confirm(`Tem certeza que deseja excluir o curso "${curso.nome}"?`)) return;
+  if (!await showConfirm(`Tem certeza que deseja excluir o curso "${curso.nome}"?`)) return;
 
   const disciplinas = loadData(StorageKeys.DISCIPLINAS);
   const temDisciplinas = disciplinas.some(d => d.cursoId === id);
@@ -164,8 +164,8 @@ function renderizarCursos() {
 }
 
 // ===== LOGOUT =====
-function logout() {
-  if (confirm('Tem certeza que deseja sair do sistema?')) {
+async function logout() {
+  if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
   }

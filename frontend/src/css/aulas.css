@@ -360,9 +360,7 @@
   padding: 20px 28px;
   border-bottom: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 16px;
 }
 
@@ -389,10 +387,15 @@
   margin: 0;
 }
 
+.grade-header-right {
+  width: 100%;
+}
+
 .grade-filters {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 10px;
-  align-items: center;
+  width: 100%;
 }
 
 .grade-filters select {
@@ -403,7 +406,8 @@
   color: var(--text);
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
-  min-width: 200px;
+  width: 100%;
+  min-width: 0;
   outline: none;
   cursor: pointer;
   transition: border-color 0.2s;
@@ -601,8 +605,6 @@
 
   .grade-header {
     padding: 14px 16px;
-    flex-direction: column;
-    align-items: flex-start;
     gap: 12px;
   }
 
@@ -611,14 +613,11 @@
   }
 
   .grade-filters {
-    width: 100%;
-    flex-direction: column;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 8px;
   }
 
   .grade-filters select {
-    width: 100%;
-    min-width: unset;
     padding: 9px 12px;
     font-size: 12px;
   }
@@ -757,6 +756,16 @@
 
   .grade-header-left h2 {
     font-size: 13px;
+  }
+
+  .grade-filters {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .grade-filters select {
+    padding: 8px 10px;
+    font-size: 11px;
   }
 
   .grade-table {

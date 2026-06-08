@@ -1,6 +1,14 @@
 // ===== DADOS EM MEMÓRIA (substituir por chamadas de API depois) =====
 let professores = loadData(StorageKeys.PROFESSORES);
 
+function showFeedback(mensagem, tipo = 'success') {
+  const el = document.getElementById('msg-feedback');
+  el.textContent = mensagem;
+  el.className = 'msg-feedback ' + tipo;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+
 const diasSemana = {
   SEGUNDA: 'Segunda-feira',
   TERCA: 'Terça-feira',
@@ -24,12 +32,12 @@ async function salvarProfessor() {
   
   // Validação
   if (!nome || !email) {
-    alert('Por favor, preencha todos os campos obrigatórios');
+    showFeedback('Por favor, preencha todos os campos obrigatórios.', 'error');
     return;
   }
 
   if (disponibilidadeCheckboxes.length === 0) {
-    alert('Por favor, selecione pelo menos um dia de disponibilidade');
+    showFeedback('Por favor, selecione pelo menos um dia de disponibilidade.', 'error');
     return;
   }
 
@@ -51,19 +59,19 @@ async function salvarProfessor() {
   
   // Atualizar interface
   renderizarProfessores();
-  alert('Professor cadastrado com sucesso!');
+  showFeedback('Professor cadastrado com sucesso!', 'success');
 }
 
 // ===== FUNÇÃO PARA REMOVER PROFESSOR =====
 async function removerProfessor(id) {
-  if (!confirm('Tem certeza que deseja remover este professor?')) return;
+  if (!await showConfirm('Tem certeza que deseja remover este professor?')) return;
 
   // TODO: Substituir por chamada DELETE /professores/:id quando o backend estiver pronto
   professores = professores.filter(p => p.id !== id);
   saveData(StorageKeys.PROFESSORES, professores);
   
   renderizarProfessores();
-  alert('Professor removido com sucesso!');
+  showFeedback('Professor removido com sucesso!', 'success');
 }
 
 // ===== EDIÇÃO DE PROFESSOR =====
@@ -94,12 +102,12 @@ async function salvarEdicaoProfessor() {
   const disponibilidadeCheckboxes = document.querySelectorAll('#edit-prof-disponibilidade input[type="checkbox"]:checked');
 
   if (!nome || !email) {
-    alert('Por favor, preencha todos os campos obrigatórios');
+    showFeedback('Por favor, preencha todos os campos obrigatórios.', 'error');
     return;
   }
 
   if (disponibilidadeCheckboxes.length === 0) {
-    alert('Por favor, selecione pelo menos um dia de disponibilidade');
+    showFeedback('Por favor, selecione pelo menos um dia de disponibilidade.', 'error');
     return;
   }
 
@@ -112,7 +120,7 @@ async function salvarEdicaoProfessor() {
 
   fecharModalProfessor();
   renderizarProfessores();
-  alert('Professor atualizado com sucesso!');
+  showFeedback('Professor atualizado com sucesso!', 'success');
 }
 
 document.addEventListener('click', function(e) {
@@ -167,8 +175,8 @@ function renderizarProfessores() {
 }
 
 // ===== FUNÇÃO PARA LOGOUT =====
-function logout() {
-  if (confirm('Tem certeza que deseja sair do sistema?')) {
+async function logout() {
+  if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
   }

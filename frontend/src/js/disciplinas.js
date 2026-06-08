@@ -79,7 +79,7 @@ async function salvarDisciplina() {
 }
 
 async function removerDisciplina(id) {
-  if (!confirm('Tem certeza que deseja remover esta disciplina?')) return;
+  if (!await showConfirm('Tem certeza que deseja remover esta disciplina?')) return;
 
   disciplinas = disciplinas.filter(d => d.id !== id);
   saveData(StorageKeys.DISCIPLINAS, disciplinas);
@@ -180,8 +180,8 @@ function renderizarDisciplinas() {
   });
 }
 
-function logout() {
-  if (confirm('Tem certeza que deseja sair do sistema?')) {
+async function logout() {
+  if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
   }
