@@ -1,0 +1,92 @@
+@startuml Diagrama de Classes
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+title Diagrama de Classes — Sistema de Horários de Professores
+
+class Professor {
+  - id : String
+  - nome : String
+  - email : String
+  - disponibilidade : List<String>
+  + adicionarDisponibilidade(dia : String) : void
+  + removerDisponibilidade(dia : String) : void
+  + estaDisponivel(dia : String) : Boolean
+}
+
+class Curso {
+  - id : String
+  - nome : String
+  - periodo : String
+  - descricao : String
+  - cargaHoraria : Integer
+  + getDisciplinas() : List<Disciplina>
+}
+
+class Disciplina {
+  - id : String
+  - nome : String
+  - cursoId : String
+  + getAulas() : List<Aula>
+}
+
+class Aula {
+  - id : String
+  - diaSemana : DiaSemana
+  - periodoTurma : String
+  - campus : String
+  - professorId : String
+  - disciplinaId : String
+  - cursoId : String
+  + getProfessor() : Professor
+  + getDisciplina() : Disciplina
+  + getCurso() : Curso
+}
+
+class Disponibilidade {
+  - id : String
+  - diaSemana : DiaSemana
+  - disponivel : Boolean
+  - professorId : String
+}
+
+enum DiaSemana {
+  SEGUNDA
+  TERCA
+  QUARTA
+  QUINTA
+  SEXTA
+  SABADO
+}
+
+Aula " *" --> "1" Professor : utiliza
+Aula " *" --> "1" Disciplina : pertence a
+Aula " *" --> "1" Curso : vinculada a
+Aula --> DiaSemana
+
+Disciplina " *" --> "1" Curso : vinculada a
+
+Disponibilidade " *" --> "1" Professor : define
+Disponibilidade --> DiaSemana
+
+Curso "1" --> "0..*" Disciplina : contém
+Professor "1" --> "0..*" Disponibilidade : possui
+
+note right of Professor
+  Regras de negócio:
+  - Não pode ter aula em dois
+    cursos no mesmo dia
+  - Só pode ser alocado em
+    dias disponíveis
+end note
+
+note bottom of Aula
+  Validações:
+  - Conflito de professor
+  - Conflito de período/turma
+  - Disponibilidade do professor
+end note
+
+@enduml

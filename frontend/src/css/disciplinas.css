@@ -136,12 +136,17 @@
   color: var(--error);
 }
 
+/* TABLE */
 .table-section {
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 80, 160, 0.05);
+}
+
+.table-container {
+  overflow-x: auto;
 }
 
 .table-header {
@@ -216,6 +221,11 @@
   color: var(--muted);
 }
 
+.empty-state p {
+  margin: 0;
+  font-size: 13px;
+}
+
 .btn-icon {
   background: none;
   border: none;
@@ -223,6 +233,8 @@
   padding: 6px 8px;
   border-radius: 4px;
   color: var(--error);
+  font-size: 14px;
+  transition: background 0.2s;
 }
 
 .btn-icon:hover {
@@ -334,16 +346,195 @@
   gap: 12px;
 }
 
-@media (max-width: 768px) {
+/* RESPONSIVE — TABLETS */
+@media (max-width: 1024px) {
   .page-content {
-    padding: 20px;
+    padding: 24px 28px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
   }
 
+  .form-card {
+    padding: 20px;
+  }
+
+  .table-header {
+    padding: 16px 20px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 20px;
+  }
+}
+
+/* RESPONSIVE — MOBILE */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20px;
+  }
+
+  .content-header h2 {
+    font-size: 18px;
+  }
+
+  .form-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
   .form-actions {
     flex-direction: column;
+  }
+
+  .btn-secondary {
+    display: none;
+  }
+
+  .table-header {
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .table-header h2 {
+    font-size: 14px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .data-table th {
+    font-size: 11px;
+  }
+
+  .acoes-cell {
+    flex-direction: column;
+  }
+
+  .btn-icon {
+    font-size: 12px;
+  }
+
+  .empty-state {
+    padding: 30px 20px;
+  }
+
+  .empty-state p {
+    font-size: 12px;
+  }
+
+  .modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+
+  .modal-header h2 {
+    font-size: 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+  }
+}
+
+/* RESPONSIVE — PHONES */
+@media (max-width: 480px) {
+  .page-content {
+    padding: 16px;
+  }
+
+  .content-header h2 {
+    font-size: 16px;
+  }
+
+  .content-header p {
+    font-size: 12px;
+  }
+
+  .form-card {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .disciplina-form {
+    gap: 16px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .form-actions {
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .btn {
+    padding: 11px 16px;
+    font-size: 12px;
+  }
+
+  .table-section {
+    border-radius: 6px;
+  }
+
+  .table-header {
+    padding: 12px 14px;
+  }
+
+  .table-header h2 {
+    font-size: 13px;
+  }
+
+  .badge {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+
+  .data-table th {
+    font-size: 10px;
+  }
+
+  .acoes-cell {
+    gap: 4px;
+  }
+
+  .btn-icon {
+    padding: 5px 6px;
+    font-size: 11px;
   }
 }

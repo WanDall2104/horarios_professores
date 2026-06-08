@@ -249,3 +249,83 @@
       font-size: 11px;
       color: #a0b0c0;
     }
+
+    /* RESPONSIVE — TABLETS */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+
+      .header img {
+        height: 44px;
+      }
+
+      .header h1 {
+        font-size: 16px;
+      }
+
+      .card {
+        padding: 24px 24px 28px;
+      }
+
+      .panel-title {
+        font-size: 14px;
+      }
+    }
+
+    /* RESPONSIVE — PHONES */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        max-width: 100%;
+      }
+
+      .header img {
+        height: 38px;
+        margin-bottom: 14px;
+      }
+
+      .header h1 {
+        font-size: 15px;
+      }
+
+      .header p {
+        font-size: 12px;
+      }
+
+      .card {
+        padding: 20px 18px 24px;
+      }
+
+      .panel-title {
+        font-size: 13px;
+      }
+
+      .panel-sub {
+        font-size: 12px;
+        margin-bottom: 18px;
+      }
+
+      label {
+        font-size: 11px;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .btn {
+        padding: 11px;
+        font-size: 12px;
+      }
+
+      .footer-brand {
+        margin-top: 20px;
+        font-size: 10px;
+      }
+    }

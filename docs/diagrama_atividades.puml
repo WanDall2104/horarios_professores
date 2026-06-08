@@ -1,0 +1,175 @@
+@startuml Diagrama de Atividades — Criar Aula
+
+skinparam activityBackgroundColor #f0f5fb
+skinparam activityBorderColor #0077C8
+skinparam activityDiamondBackgroundColor #fff3cd
+skinparam activityDiamondBorderColor #ffc107
+skinparam arrowColor #0d2653
+
+title Diagrama de Atividade — Criar Aula
+
+start
+
+:Usuário acessa página de Aulas;
+:Preenche formulário:
+  - Professor
+  - Curso
+  - Disciplina
+  - Dia da Semana
+  - Período/Turma
+  - Campus;
+
+:Clica em "Vincular Aula";
+
+if (Todos os campos preenchidos?) then (não)
+  :Exibe erro:
+    "Preencha todos os campos obrigatórios";
+  stop
+endif
+
+if (Disciplina pertence ao Curso selecionado?) then (não)
+  :Exibe erro:
+    "A disciplina não pertence ao curso escolhido";
+  stop
+endif
+
+:Validar conflitos locais;
+
+if (Professor já tem aula neste dia?) then (sim)
+  :Exibe erro:
+    "Este professor já possui aula neste dia";
+  stop
+endif
+
+if (Período/Turma já tem aula neste dia?) then (sim)
+  :Exibe erro:
+    "Este período/turma já possui aula neste dia";
+  stop
+endif
+
+if (Professor disponível neste dia?) then (não)
+  :Exibe erro:
+    "O professor não está disponível neste dia";
+  stop
+endif
+
+:Tentar enviar para API (POST /aulas);
+
+if (API disponível?) then (sim)
+  :Salvar no servidor;
+else (não)
+  :Salvar localmente (localStorage);
+endif
+
+:Salvar aula na lista local;
+:Limpar formulário;
+:Re-renderizar tabela de aulas;
+:Re-renderizar grade semanal;
+:Exibir mensagem de sucesso;
+
+stop
+
+@enduml
+
+
+@startuml Diagrama de Atividades — Login
+
+skinparam activityBackgroundColor #f0f5fb
+skinparam activityBorderColor #0077C8
+skinparam activityDiamondBackgroundColor #fff3cd
+skinparam activityDiamondBorderColor #ffc107
+skinparam arrowColor #0d2653
+
+title Diagrama de Atividade — Login
+
+start
+
+:Usuário acessa página de Login;
+:Insere e-mail e senha;
+:Clica em "Entrar no Sistema";
+
+if (E-mail e senha preenchidos?) then (não)
+  :Exibe erro:
+    "Preencha e-mail e senha";
+  stop
+endif
+
+:Tentar autenticar (POST /login);
+
+if (API disponível?) then (sim)
+  if (Credenciais válidas?) then (sim)
+    :Receber token JWT;
+    :Salvar token no localStorage;
+    :Extrair nome do usuário do e-mail;
+    :Redirecionar para Dashboard;
+  else (não)
+    :Exibe erro:
+      "Email ou senha inválidos";
+    stop
+  endif
+else (não)
+  :Modo offline:
+    Salvar token como 'offline';
+  :Redirecionar para Dashboard;
+endif
+
+:Exibir Dashboard com totais;
+:Permitir acesso às funcionalidades;
+
+stop
+
+@enduml
+
+
+@startuml Diagrama de Atividades — CRUD Professor
+
+skinparam activityBackgroundColor #f0f5fb
+skinparam activityBorderColor #0077C8
+skinparam activityDiamondBackgroundColor #fff3cd
+skinparam activityDiamondBorderColor #ffc107
+skinparam arrowColor #0d2653
+
+title Diagrama de Atividade — Gerenciar Professor
+
+start
+
+:Usuário acessa página de Professores;
+
+split
+  :Cadastrar Professor;
+  :Preenche nome, e-mail e disponibilidade;
+  if (Campos obrigatórios preenchidos?) then (não)
+    :Exibe erro;
+    stop
+  endif
+  if (Pelo menos um dia selecionado?) then (não)
+    :Exibe erro;
+    stop
+  endif
+  :Salvar professor no localStorage;
+  :Re-renderizar tabela;
+
+split again
+
+  :Editar Professor;
+  :Clica no ícone de editar;
+  :Modal abre com dados preenchidos;
+  :Altera nome, e-mail ou disponibilidade;
+  :Clica em "Salvar Alterações";
+  :Atualizar professor no localStorage;
+  :Re-renderizar tabela;
+
+split again
+
+  :Excluir Professor;
+  :Clica no ícone de excluir;
+  if (Confirma exclusão?) then (sim)
+    :Remover professor do localStorage;
+    :Re-renderizar tabela;
+  endif
+
+endsplit
+
+stop
+
+@enduml

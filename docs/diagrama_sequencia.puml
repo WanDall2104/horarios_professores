@@ -1,0 +1,199 @@
+@startuml Diagrama de Sequência — Criar Aula
+
+skinparam sequenceArrowColor #0d2653
+skinparam sequenceLifeLineBorderColor #0077C8
+skinparam sequenceParticipantBackgroundColor #f0f5fb
+skinparam sequenceParticipantBorderColor #0077C8
+
+title Diagrama de Sequência — Criar Aula
+
+actor "Usuário" as User
+participant "Frontend\n(HTML/JS)" as FE
+participant "localStorage" as LS
+participant "API Backend\n(Express)" as API
+
+User -> FE : Preenche formulário\n(professor, curso, disciplina,\ndia, período, campus)
+User -> FE : Clica "Vincular Aula"
+
+FE -> FE : Validar campos obrigatórios
+FE -> FE : Validar disciplina pertence ao curso
+
+alt Dados inválidos
+  FE --> User : Exibir mensagem de erro
+else Dados válidos
+  FE -> FE : Validar conflitos locais\n(professor, período, disponibilidade)
+
+  alt Conflito detectado
+    FE --> User : Exibir erro de conflito
+  else Sem conflitos
+    FE -> API : POST /aulas\n{professorId, cursoId,\ndisciplinaId, diaSemana}
+
+    alt API disponível
+      API -> API : Validar regras de negócio\n(disponibilidade, conflitos)
+      alt Validação OK
+        API --> FE : 201 Created {id, ...}
+      else Erro de validação
+        API --> FE : 400 {error: "..."}
+        FE --> User : Exibir erro da API
+      end
+    else API indisponível
+      API --> FE : Network Error
+    end
+
+    FE -> LS : salvarAula(objeto)
+    FE -> FE : Limpar formulário
+    FE -> FE : renderizarTabela()
+    FE -> FE : renderizarGradeSemanal()
+    FE --> User : Exibir "Aula vinculada com sucesso!"
+  end
+end
+
+@enduml
+
+
+@startuml Diagrama de Sequência — Login
+
+skinparam sequenceArrowColor #0d2653
+skinparam sequenceLifeLineBorderColor #0077C8
+skinparam sequenceParticipantBackgroundColor #f0f5fb
+skinparam sequenceParticipantBorderColor #0077C8
+
+title Diagrama de Sequência — Login
+
+actor "Usuário" as User
+participant "Login\n(login.html)" as Login
+participant "API Backend\n(Express)" as API
+participant "localStorage" as LS
+participant "Dashboard\n(dashboard.html)" as Dash
+
+User -> Login : Insere e-mail e senha
+User -> Login : Clica "Entrar no Sistema"
+
+Login -> Login : Validar campos
+
+alt Campos vazios
+  Login --> User : Exibir "Preencha e-mail e senha"
+else Campos preenchidos
+  Login -> API : POST /login\n{email, senha}
+
+  alt API disponível
+    API -> API : Buscar usuário no banco\nComparar hash bcrypt
+
+    alt Credenciais inválidas
+      API --> Login : 401 {error: "Email ou senha inválidos"}
+      Login --> User : Exibir erro
+    else Credenciais válidas
+      API --> Login : 200 {token: "eyJ..."}
+      Login -> LS : setItem('token', token)
+      Login -> LS : setItem('userName', email)
+      Login -> Dash : window.location.href
+      Dash -> LS : getItem('userName')
+      Dash --> User : Exibir Dashboard
+    end
+
+  else API indisponível (offline)
+    API --> Login : Network Error
+    Login -> LS : setItem('token', 'offline')
+    Login -> LS : setItem('userName', email)
+    Login -> Dash : window.location.href
+    Dash --> User : Exibir Dashboard (modo offline)
+  end
+end
+
+@enduml
+
+
+@startuml Diagrama de Sequência — Editar Aula
+
+skinparam sequenceArrowColor #0d2653
+skinparam sequenceLifeLineBorderColor #0077C8
+skinparam sequenceParticipantBackgroundColor #f0f5fb
+skinparam sequenceParticipantBorderColor #0077C8
+
+title Diagrama de Sequência — Editar Aula
+
+actor "Usuário" as User
+participant "Frontend\n(HTML/JS)" as FE
+participant "localStorage" as LS
+
+User -> FE : Clica ícone de editar
+FE -> LS : loadData('horarios_aulas')
+LS --> FE : lista de aulas
+FE -> FE : Buscar aula por ID
+FE -> FE : Preencher modal com dados da aula
+FE -> FE : carregarDropdownsEdit()
+FE -> LS : loadData('horarios_professores')
+FE -> LS : loadData('horarios_cursos')
+FE -> LS : loadData('horarios_disciplinas')
+FE -> FE : Preencher selects do modal
+FE -> FE : Abrir modal (.classList.add('open'))
+
+FE --> User : Modal exibido com dados preenchidos
+
+User -> FE : Alterar campos\n(professor, dia, período, etc.)
+User -> FE : Clica "Salvar Alterações"
+
+FE -> FE : Validar campos obrigatórios
+FE -> FE : Validar disciplina x curso
+
+alt Dados inválidos
+  FE -> FE : showModalFeedback(erro)
+  FE --> User : Erro exibido dentro do modal
+else Dados válidos
+  FE -> FE : validarConflitosLocal()\n(com ignoreAulaId)
+
+  alt Conflito detectado
+    FE -> FE : showModalFeedback(erro)
+    FE --> User : Erro exibido dentro do modal
+  else Sem conflitos
+    FE -> LS : Atualizar objeto aula no array
+    FE -> LS : saveData('horarios_aulas')
+    FE -> FE : fecharModalAula()
+    FE -> FE : renderizarAulas()
+    FE -> FE : renderizarGradeSemanal()
+    FE --> User : "Aula atualizada com sucesso!"
+  end
+end
+
+@enduml
+
+
+@startuml Diagrama de Sequência — Grade Semanal
+
+skinparam sequenceArrowColor #0d2653
+skinparam sequenceLifeLineBorderColor #0077C8
+skinparam sequenceParticipantBackgroundColor #f0f5fb
+skinparam sequenceParticipantBorderColor #0077C8
+
+title Diagrama de Sequência — Visualizar Grade Semanal
+
+actor "Usuário" as User
+participant "Frontend\n(aulas.html)" as FE
+participant "localStorage" as LS
+
+User -> FE : Acessa página de Aulas
+FE -> LS : loadData('horarios_aulas')
+FE -> LS : loadData('horarios_professores')
+FE -> LS : loadData('horarios_cursos')
+FE -> LS : loadData('horarios_disciplinas')
+FE -> FE : carregarCursosGrade()
+FE -> FE : renderizarGradeSemanal()
+
+FE --> User : Grade exibida (todas as aulas)
+
+User -> FE : Seleciona curso no filtro
+FE -> FE : atualizarFiltroTurma()
+FE -> LS : Filtrar aulas por curso
+FE -> FE : Popular dropdown de turmas
+
+User -> FE : Seleciona turma no filtro
+FE -> FE : renderizarGradeSemanal()
+FE -> LS : Filtrar aulas por curso + turma
+FE -> FE : Montar tabela HTML:
+  - Linhas: Segunda a Sexta
+  - Colunas: Período/Turma
+  - Células: Disciplina + Professor + Curso + Período
+
+FE --> User : Grade filtrada exibida
+
+@enduml

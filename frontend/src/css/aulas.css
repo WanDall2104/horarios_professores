@@ -141,7 +141,6 @@
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 8px;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 80, 160, 0.05);
 }
 
@@ -177,6 +176,7 @@
 
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
@@ -535,6 +535,15 @@
     padding: 20px;
   }
 
+  .content-header h2 {
+    font-size: 18px;
+  }
+
+  .form-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
@@ -543,34 +552,251 @@
     flex-direction: column;
   }
 
-  .grade-header {
-    padding: 16px 20px;
+  .table-section {
+    border-radius: 6px;
+  }
+
+  .table-header {
+    padding: 14px 16px;
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+  }
+
+  .table-header h2 {
+    font-size: 14px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .data-table th {
+    font-size: 11px;
+  }
+
+  .empty-state {
+    padding: 30px 20px;
+  }
+
+  .empty-state p {
+    font-size: 12px;
+  }
+
+  .acoes-cell {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .btn-icon {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+
+  .grade-section {
+    border-radius: 6px;
+  }
+
+  .grade-header {
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .grade-header-left h2 {
+    font-size: 14px;
   }
 
   .grade-filters {
     width: 100%;
     flex-direction: column;
+    gap: 8px;
   }
 
   .grade-filters select {
     width: 100%;
     min-width: unset;
+    padding: 9px 12px;
+    font-size: 12px;
   }
 
   .grade-container {
-    padding: 16px 20px;
+    padding: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .grade-table {
+    min-width: 480px;
+  }
+
+  .grade-table th {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+
+  .th-periodo {
+    font-size: 12px;
+  }
+
+  .th-turma {
+    font-size: 10px;
   }
 
   .grade-table td {
     height: auto;
     min-height: 60px;
-    padding: 10px;
+    padding: 8px 10px;
   }
 
   .grade-table .grade-dia-label {
-    width: 80px;
+    width: 70px;
+    font-size: 11px;
+    padding: 10px 8px;
+  }
+
+  .grade-cell {
+    padding: 6px 8px;
+    margin-bottom: 4px;
+  }
+
+  .grade-cell .grade-cell-disciplina {
+    font-size: 11px;
+  }
+
+  .grade-cell .grade-cell-professor {
+    font-size: 10px;
+  }
+
+  .grade-cell .grade-cell-periodo {
+    font-size: 10px;
+  }
+
+  .grade-cell .grade-cell-turma {
+    font-size: 9px;
+  }
+
+  .grade-cell-empty {
+    font-size: 11px;
+    padding: 10px;
+  }
+
+  .modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+
+  .modal-header h2 {
+    font-size: 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-content {
+    padding: 16px;
+  }
+
+  .content-header h2 {
+    font-size: 16px;
+  }
+
+  .form-card {
+    padding: 14px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 11px 16px;
+    font-size: 12px;
+  }
+
+  .table-header h2 {
+    font-size: 13px;
+  }
+
+  .badge {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .data-table th {
+    font-size: 10px;
+  }
+
+  .grade-header-left h2 {
+    font-size: 13px;
+  }
+
+  .grade-table {
+    min-width: 400px;
+  }
+
+  .grade-table th {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .grade-table td {
+    padding: 6px 8px;
+  }
+
+  .grade-table .grade-dia-label {
+    width: 56px;
+    font-size: 10px;
+    padding: 8px 6px;
+  }
+
+  .grade-cell {
+    padding: 5px 6px;
+  }
+
+  .grade-cell .grade-cell-disciplina {
+    font-size: 10px;
+  }
+
+  .grade-cell .grade-cell-professor,
+  .grade-cell .grade-cell-periodo,
+  .grade-cell .grade-cell-turma {
+    font-size: 9px;
+  }
+
+  .empty-state {
+    padding: 24px 16px;
+  }
+
+  .empty-state p {
     font-size: 11px;
   }
 }
