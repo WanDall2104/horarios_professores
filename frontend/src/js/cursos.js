@@ -1,7 +1,6 @@
-// ===== DADOS EM MEMÓRIA (substituir por chamadas de API depois) =====
-let cursos = loadData(StorageKeys.CURSOS);
+const API = 'http://localhost:3000';
 
-// ===== UTILITÁRIOS =====
+let cursos = [];
 
 function showFeedback(mensagem, tipo = 'success') {
   const el = document.getElementById('msg-feedback');
@@ -11,14 +10,23 @@ function showFeedback(mensagem, tipo = 'success') {
   setTimeout(() => { el.style.display = 'none'; }, 3500);
 }
 
-// ===== CARREGAR CURSOS =====
 async function carregarCursos() {
-  // TODO: Substituir por chamada GET /cursos quando o backend estiver pronto
-  cursos = loadData(StorageKeys.CURSOS);
+  try {
+    const res = await fetch(API + '/cursos');
+    if (res.ok) {
+      const data = await res.json();
+      cursos = data.map(c => ({
+        id: c.id,
+        nome: c.nome,
+        periodo: c.periodo || '',
+        descricao: c.descricao || '—',
+        cargaHoraria: c.cargaHoraria
+      }));
+    }
+  } catch {}
   renderizarCursos();
 }
 
-// ===== SALVAR CURSO =====
 async function salvarCurso() {
   const nome = document.getElementById('nome-curso').value.trim();
   const periodo = document.getElementById('periodo-curso').value.trim();
@@ -30,45 +38,54 @@ async function salvarCurso() {
     return;
   }
 
-  const curso = {
-    id: 'curso-' + Date.now(),
-    nome,
-    periodo: periodo || '',
-    descricao: descricao || '—',
-    cargaHoraria: cargaHorariaRaw ? parseInt(cargaHorariaRaw) : null
-  };
+  try {
+    const res = await fetch(API + '/cursos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome,
+        periodo: periodo || undefined,
+        descricao: descricao || undefined,
+        cargaHoraria: cargaHorariaRaw ? parseInt(cargaHorariaRaw) : undefined
+      })
+    });
 
-  // TODO: Substituir por chamada POST /cursos quando o backend estiver pronto
-  cursos.push(curso);
-  saveData(StorageKeys.CURSOS, cursos);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao cadastrar curso', 'error');
+      return;
+    }
 
-  document.getElementById('curso-form').reset();
-  renderizarCursos();
-  showFeedback('✓ Curso cadastrado com sucesso!', 'success');
+    document.getElementById('curso-form').reset();
+    await carregarCursos();
+    showFeedback('Curso cadastrado com sucesso!', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
+  }
 }
 
-// ===== REMOVER CURSO =====
 async function removerCurso(id) {
   const curso = cursos.find(c => c.id === id);
   if (!curso) return;
 
   if (!await showConfirm(`Tem certeza que deseja excluir o curso "${curso.nome}"?`)) return;
 
-  const disciplinas = loadData(StorageKeys.DISCIPLINAS);
-  const temDisciplinas = disciplinas.some(d => d.cursoId === id);
-  if (temDisciplinas) {
-    showFeedback('Não é possível excluir: existem disciplinas vinculadas a este curso.', 'error');
-    return;
+  try {
+    const res = await fetch(API + '/cursos/' + id, { method: 'DELETE' });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao remover curso', 'error');
+      return;
+    }
+
+    await carregarCursos();
+    showFeedback('Curso excluído com sucesso.', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
   }
-
-  cursos = cursos.filter(c => c.id !== id);
-  saveData(StorageKeys.CURSOS, cursos);
-
-  renderizarCursos();
-  showFeedback('Curso excluído com sucesso.', 'success');
 }
 
-// ===== ABRIR MODAL DE EDIÇÃO =====
 function abrirEdicao(id) {
   const curso = cursos.find(c => c.id === id);
   if (!curso) return;
@@ -82,12 +99,10 @@ function abrirEdicao(id) {
   document.getElementById('modal-edicao').classList.add('open');
 }
 
-// ===== FECHAR MODAL =====
 function fecharModal() {
   document.getElementById('modal-edicao').classList.remove('open');
 }
 
-// ===== SALVAR EDIÇÃO =====
 async function salvarEdicao() {
   const id = document.getElementById('edit-id').value;
   const nome = document.getElementById('edit-nome').value.trim();
@@ -100,25 +115,32 @@ async function salvarEdicao() {
     return;
   }
 
-  const index = cursos.findIndex(c => c.id === id);
-  if (index === -1) return;
+  try {
+    const res = await fetch(API + '/cursos/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome,
+        periodo: periodo || undefined,
+        descricao: descricao || undefined,
+        cargaHoraria: cargaHorariaRaw ? parseInt(cargaHorariaRaw) : undefined
+      })
+    });
 
-  // TODO: Substituir por chamada PUT /cursos/:id quando o backend estiver pronto
-  cursos[index] = {
-    ...cursos[index],
-    nome,
-    periodo,
-    descricao: descricao || '—',
-    cargaHoraria: cargaHorariaRaw ? parseInt(cargaHorariaRaw) : null
-  };
-  saveData(StorageKeys.CURSOS, cursos);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao atualizar curso', 'error');
+      return;
+    }
 
-  fecharModal();
-  renderizarCursos();
-  showFeedback('✓ Curso atualizado com sucesso!', 'success');
+    fecharModal();
+    await carregarCursos();
+    showFeedback('Curso atualizado com sucesso!', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
+  }
 }
 
-// ===== RENDERIZAÇÃO =====
 function renderizarCursos() {
   const tabela = document.getElementById('tabela-cursos');
   const emptyState = document.getElementById('empty-state');
@@ -163,7 +185,6 @@ function renderizarCursos() {
   });
 }
 
-// ===== LOGOUT =====
 async function logout() {
   if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
@@ -171,16 +192,13 @@ async function logout() {
   }
 }
 
-// ===== FECHAR MODAL AO CLICAR FORA =====
 document.addEventListener('click', function(e) {
   const modal = document.getElementById('modal-edicao');
   if (e.target === modal) fecharModal();
 });
 
-// ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
   const userName = localStorage.getItem('userName') || 'Usuário';
   document.getElementById('user-name').textContent = userName;
-
   carregarCursos();
 });

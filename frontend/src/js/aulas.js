@@ -33,20 +33,68 @@ function preencherSelect(selectId, items, labelKey, placeholder, labelFormatter)
   });
 }
 
-function carregarDropdowns() {
-  professores = loadData(StorageKeys.PROFESSORES);
-  cursos = loadData(StorageKeys.CURSOS);
-  disciplinas = loadData(StorageKeys.DISCIPLINAS);
+async function carregarDropdowns() {
+  try {
+    const [resProf, resCursos, resDisc] = await Promise.all([
+      fetch(API + '/professores'),
+      fetch(API + '/cursos'),
+      fetch(API + '/disciplinas')
+    ]);
+
+    if (resProf.ok) {
+      const data = await resProf.json();
+      professores = data.map(p => ({
+        id: p.id,
+        nome: p.nome,
+        email: p.email,
+        disponibilidade: p.disponibilidades
+          ? p.disponibilidades.filter(d => d.disponivel).map(d => d.diaSemana)
+          : []
+      }));
+    }
+
+    if (resCursos.ok) {
+      cursos = await resCursos.json();
+    }
+
+    if (resDisc.ok) {
+      disciplinas = await resDisc.json();
+    }
+  } catch {}
 
   preencherSelect('professor', professores, 'nome', 'Selecione um professor...');
   preencherSelect('curso', cursos, 'nome', 'Selecione um curso...', (c) => c.periodo ? `${c.nome} — ${c.periodo}` : c.nome);
   atualizarDisciplinasPorCurso();
 }
 
-function carregarDropdownsEdit() {
-  professores = loadData(StorageKeys.PROFESSORES);
-  cursos = loadData(StorageKeys.CURSOS);
-  disciplinas = loadData(StorageKeys.DISCIPLINAS);
+async function carregarDropdownsEdit() {
+  try {
+    const [resProf, resCursos, resDisc] = await Promise.all([
+      fetch(API + '/professores'),
+      fetch(API + '/cursos'),
+      fetch(API + '/disciplinas')
+    ]);
+
+    if (resProf.ok) {
+      const data = await resProf.json();
+      professores = data.map(p => ({
+        id: p.id,
+        nome: p.nome,
+        email: p.email,
+        disponibilidade: p.disponibilidades
+          ? p.disponibilidades.filter(d => d.disponivel).map(d => d.diaSemana)
+          : []
+      }));
+    }
+
+    if (resCursos.ok) {
+      cursos = await resCursos.json();
+    }
+
+    if (resDisc.ok) {
+      disciplinas = await resDisc.json();
+    }
+  } catch {}
 
   preencherSelect('edit-aula-professor', professores, 'nome', 'Selecione um professor...');
   preencherSelect('edit-aula-curso', cursos, 'nome', 'Selecione um curso...', (c) => c.periodo ? `${c.nome} — ${c.periodo}` : c.nome);
@@ -58,7 +106,7 @@ function atualizarDisciplinasEdit() {
   const selectDisciplina = document.getElementById('edit-aula-disciplina');
   const periodoTurmaInput = document.getElementById('edit-aula-periodo');
 
-  const curso = findById(cursos, cursoId);
+  const curso = cursos.find(c => c.id === cursoId);
   if (curso && curso.periodo) {
     periodoTurmaInput.value = curso.periodo;
   }
@@ -82,7 +130,7 @@ function atualizarDisciplinasPorCurso() {
   const selectDisciplina = document.getElementById('disciplina');
   const periodoTurmaInput = document.getElementById('periodo-turma');
 
-  const curso = findById(cursos, cursoId);
+  const curso = cursos.find(c => c.id === cursoId);
   if (curso && curso.periodo) {
     periodoTurmaInput.value = curso.periodo;
   } else {
@@ -104,10 +152,36 @@ function atualizarDisciplinasPorCurso() {
 }
 
 async function carregarAulas() {
-  aulas = loadData(StorageKeys.AULAS);
-  professores = loadData(StorageKeys.PROFESSORES);
-  cursos = loadData(StorageKeys.CURSOS);
-  disciplinas = loadData(StorageKeys.DISCIPLINAS);
+  try {
+    const res = await fetch(API + '/aulas');
+    if (res.ok) {
+      aulas = await res.json();
+    }
+  } catch {}
+
+  try {
+    const [resProf, resCursos, resDisc] = await Promise.all([
+      fetch(API + '/professores'),
+      fetch(API + '/cursos'),
+      fetch(API + '/disciplinas')
+    ]);
+
+    if (resProf.ok) {
+      const data = await resProf.json();
+      professores = data.map(p => ({
+        id: p.id,
+        nome: p.nome,
+        email: p.email,
+        disponibilidade: p.disponibilidades
+          ? p.disponibilidades.filter(d => d.disponivel).map(d => d.diaSemana)
+          : []
+      }));
+    }
+
+    if (resCursos.ok) cursos = await resCursos.json();
+    if (resDisc.ok) disciplinas = await resDisc.json();
+  } catch {}
+
   renderizarAulas();
 }
 
@@ -128,7 +202,7 @@ function validarConflitosLocal(professorId, cursoId, diaSemana, periodoTurma, ig
     return 'Este período/turma já possui aula neste dia da semana.';
   }
 
-  const professor = findById(professores, professorId);
+  const professor = professores.find(p => p.id === professorId);
   if (professor && professor.disponibilidade && !professor.disponibilidade.includes(diaSemana)) {
     return 'O professor não está disponível neste dia da semana.';
   }
@@ -149,7 +223,7 @@ async function criarAula() {
     return;
   }
 
-  const disciplina = findById(disciplinas, disciplinaId);
+  const disciplina = disciplinas.find(d => d.id === disciplinaId);
   if (disciplina && disciplina.cursoId !== cursoId) {
     showFeedback('A disciplina selecionada não pertence ao curso escolhido.', 'error');
     return;
@@ -161,46 +235,26 @@ async function criarAula() {
     return;
   }
 
-  const aula = {
-    id: 'aula-' + Date.now(),
-    professorId,
-    cursoId,
-    disciplinaId,
-    diaSemana,
-    periodoTurma,
-    campus
-  };
-
   try {
     const res = await fetch(API + '/aulas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        professorId,
-        cursoId,
-        disciplinaId,
-        diaSemana
-      })
+      body: JSON.stringify({ professorId, cursoId, disciplinaId, diaSemana, periodoTurma, campus })
     });
 
-    if (res.ok) {
-      const data = await res.json();
-      aula.id = data.id || aula.id;
-    } else {
+    if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      showFeedback(data.error || 'Não foi possível vincular a aula na API.', 'error');
+      showFeedback(data.error || 'Não foi possível cadastrar a aula.', 'error');
       return;
     }
   } catch {
-    // Salva localmente quando a API não estiver disponível
+    showFeedback('Erro ao conectar com o servidor', 'error');
+    return;
   }
 
-  aulas.push(aula);
-  saveData(StorageKeys.AULAS, aulas);
-
   document.getElementById('aula-form').reset();
-  carregarDropdowns();
-  renderizarAulas();
+  await carregarAulas();
+  await carregarDropdowns();
   carregarFiltrosGrade();
   renderizarGradeSemanal();
   showFeedback('Aula vinculada com sucesso!', 'success');
@@ -209,16 +263,24 @@ async function criarAula() {
 async function removerAula(id) {
   if (!await showConfirm('Tem certeza que deseja remover esta aula?')) return;
 
-  aulas = aulas.filter(a => a.id !== id);
-  saveData(StorageKeys.AULAS, aulas);
+  try {
+    const res = await fetch(API + '/aulas/' + id, { method: 'DELETE' });
 
-  renderizarAulas();
+    if (!res.ok) {
+      showFeedback('Erro ao remover aula', 'error');
+      return;
+    }
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
+    return;
+  }
+
+  await carregarAulas();
   carregarFiltrosGrade();
   renderizarGradeSemanal();
   showFeedback('Aula removida com sucesso.', 'success');
 }
 
-// ===== EDIÇÃO DE AULA =====
 function showModalFeedback(mensagem, tipo = 'error') {
   const el = document.getElementById('edit-aula-msg');
   el.textContent = mensagem;
@@ -270,7 +332,7 @@ async function salvarEdicaoAula() {
     return;
   }
 
-  const disciplina = findById(disciplinas, disciplinaId);
+  const disciplina = disciplinas.find(d => d.id === disciplinaId);
   if (disciplina && disciplina.cursoId !== cursoId) {
     showModalFeedback('A disciplina selecionada não pertence ao curso escolhido.');
     return;
@@ -282,14 +344,25 @@ async function salvarEdicaoAula() {
     return;
   }
 
-  const index = aulas.findIndex(a => a.id === id);
-  if (index === -1) return;
+  try {
+    const res = await fetch(API + '/aulas/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ professorId, cursoId, disciplinaId, diaSemana, periodoTurma, campus })
+    });
 
-  aulas[index] = { ...aulas[index], professorId, cursoId, disciplinaId, diaSemana, periodoTurma, campus };
-  saveData(StorageKeys.AULAS, aulas);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showModalFeedback(data.error || 'Erro ao atualizar aula');
+      return;
+    }
+  } catch {
+    showModalFeedback('Erro ao conectar com o servidor');
+    return;
+  }
 
   fecharModalAula();
-  renderizarAulas();
+  await carregarAulas();
   carregarFiltrosGrade();
   renderizarGradeSemanal();
   showFeedback('Aula atualizada com sucesso!', 'success');
@@ -300,7 +373,6 @@ document.addEventListener('click', function (e) {
   if (e.target === modal) fecharModalAula();
 });
 
-// ===== GRADE SEMANAL =====
 function extrairPeriodo(periodoTurma) {
   if (!periodoTurma) return '';
   const partes = periodoTurma.split(/[-–]/);
@@ -313,11 +385,30 @@ function extrairTurma(periodoTurma) {
   return partes[1] ? partes[1].trim() : '';
 }
 
-function carregarFiltrosGrade() {
-  aulas = loadData(StorageKeys.AULAS);
-  cursos = loadData(StorageKeys.CURSOS);
-  professores = loadData(StorageKeys.PROFESSORES);
-  disciplinas = loadData(StorageKeys.DISCIPLINAS);
+async function carregarFiltrosGrade() {
+  try {
+    const [resAulas, resProf, resCursos, resDisc] = await Promise.all([
+      fetch(API + '/aulas'),
+      fetch(API + '/professores'),
+      fetch(API + '/cursos'),
+      fetch(API + '/disciplinas')
+    ]);
+
+    if (resAulas.ok) aulas = await resAulas.json();
+    if (resProf.ok) {
+      const data = await resProf.json();
+      professores = data.map(p => ({
+        id: p.id,
+        nome: p.nome,
+        email: p.email,
+        disponibilidade: p.disponibilidades
+          ? p.disponibilidades.filter(d => d.disponivel).map(d => d.diaSemana)
+          : []
+      }));
+    }
+    if (resCursos.ok) cursos = await resCursos.json();
+    if (resDisc.ok) disciplinas = await resDisc.json();
+  } catch {}
 
   preencherSelect('grade-filtro-curso', cursos, 'nome', 'Todos os cursos', (c) => c.periodo ? `${c.nome} — ${c.periodo}` : c.nome);
   preencherSelect('grade-filtro-professor', professores, 'nome', 'Todos os professores');
@@ -327,10 +418,6 @@ function carregarFiltrosGrade() {
 }
 
 function atualizarFiltrosDependentes() {
-  aulas = loadData(StorageKeys.AULAS);
-  cursos = loadData(StorageKeys.CURSOS);
-  disciplinas = loadData(StorageKeys.DISCIPLINAS);
-
   const cursoId = document.getElementById('grade-filtro-curso').value;
   let aulasBase = cursoId ? aulas.filter(a => a.cursoId === cursoId) : aulas;
 
@@ -380,11 +467,6 @@ function renderizarGradeSemanal() {
   const campusFiltro = document.getElementById('grade-filtro-campus').value;
   const diaFiltro = document.getElementById('grade-filtro-dia').value;
 
-  aulas = loadData(StorageKeys.AULAS);
-  professores = loadData(StorageKeys.PROFESSORES);
-  cursos = loadData(StorageKeys.CURSOS);
-  disciplinas = loadData(StorageKeys.DISCIPLINAS);
-
   let aulasFiltradas = aulas;
 
   if (cursoId) aulasFiltradas = aulasFiltradas.filter(a => a.cursoId === cursoId);
@@ -424,9 +506,9 @@ function renderizarGradeSemanal() {
         if (aulasNoDia.length > 0) {
           html += '<td>';
           aulasNoDia.forEach(aula => {
-            const profNome = getNomeProfessor(aula.professorId, professores);
-            const discNome = getNomeDisciplina(aula.disciplinaId, disciplinas);
-            const cursoObj = findById(cursos, aula.cursoId);
+            const profNome = professores.find(p => p.id === aula.professorId)?.nome || '—';
+            const discNome = disciplinas.find(d => d.id === aula.disciplinaId)?.nome || '—';
+            const cursoObj = cursos.find(c => c.id === aula.cursoId);
             const cursoNome = cursoObj ? cursoObj.nome : '—';
             const cursoPeriodo = cursoObj && cursoObj.periodo ? cursoObj.periodo : '';
             const periodoLabel = extrairPeriodo(aula.periodoTurma);
@@ -448,9 +530,9 @@ function renderizarGradeSemanal() {
       if (aulasNoDia.length > 0) {
         html += '<td>';
         aulasNoDia.forEach(aula => {
-          const profNome = getNomeProfessor(aula.professorId, professores);
-          const discNome = getNomeDisciplina(aula.disciplinaId, disciplinas);
-          const cursoObj = findById(cursos, aula.cursoId);
+          const profNome = professores.find(p => p.id === aula.professorId)?.nome || '—';
+          const discNome = disciplinas.find(d => d.id === aula.disciplinaId)?.nome || '—';
+          const cursoObj = cursos.find(c => c.id === aula.cursoId);
           const cursoNome = cursoObj ? cursoObj.nome : '—';
           const cursoPeriodo = cursoObj && cursoObj.periodo ? cursoObj.periodo : '';
           const periodoLabel = extrairPeriodo(aula.periodoTurma);
@@ -492,9 +574,9 @@ function renderizarAulas() {
   aulas.forEach(aula => {
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td>${getNomeProfessor(aula.professorId, professores)}</td>
-      <td><strong>${getNomeDisciplina(aula.disciplinaId, disciplinas)}</strong></td>
-      <td>${getNomeCursoPeriodo(aula.cursoId, cursos)}</td>
+      <td>${professores.find(p => p.id === aula.professorId)?.nome || '—'}</td>
+      <td><strong>${disciplinas.find(d => d.id === aula.disciplinaId)?.nome || '—'}</strong></td>
+      <td>${cursos.find(c => c.id === aula.cursoId) ? (() => { const co = cursos.find(c => c.id === aula.cursoId); return co.periodo ? `${co.nome} — ${co.periodo}` : co.nome; })() : '—'}</td>
       <td><span class="dia-badge">${diasSemana[aula.diaSemana] || aula.diaSemana}</span></td>
       <td>${aula.periodoTurma || '—'}</td>
       <td>${aula.campus || '—'}</td>

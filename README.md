@@ -6,62 +6,86 @@ Sistema completo para gerenciamento de horários de professores com API REST e i
 
 ```
 horarios_professores/
-├── backend/                 # API REST (Express + TypeScript)
+├── backend/                 # API REST (Express + TypeScript + Prisma)
 │   ├── src/
-│   │   ├── config/         # Configurações da aplicação
-│   │   ├── controllers/    # Controladores HTTP
-│   │   ├── middleware/     # Middlewares Express
-│   │   ├── routes/         # Rotas da API
-│   │   ├── repositories/   # Acesso a dados
-│   │   ├── services/       # Lógica de negócio
-│   │   ├── types/          # DTOs e interfaces
-│   │   ├── errors/         # Classes de erro customizadas
-│   │   └── index.ts        # Entrada da aplicação
+│   │   ├── services/        # Lógica de negócio
+│   │   ├── types/           # DTOs e interfaces
+│   │   ├── errors/          # Classes de erro customizadas
+│   │   └── index.ts         # Entrada da aplicação
 │   ├── prisma/
-│   │   ├── schema.prisma   # Schema do banco de dados
-│   │   └── seed.ts         # Seed inicial
-│   └── Dockerfile
+│   │   ├── schema.prisma    # Schema do banco de dados
+│   │   └── seed.ts          # Seed inicial
+│   └── docker-compose.yml   # Orquestração de containers
 │
 ├── frontend/                # Interface web
 │   └── src/
-│       ├── index.html       # Página principal
+│       ├── *.html           # Páginas (login, dashboard, aulas, etc.)
 │       ├── css/             # Estilos
-│       └── js/              # Scripts
+│       └── js/              # Scripts (comunicação com API)
 │
-├── docs/                    # Documentação
-│   └── ARCHITECTURE.md      # Decisões arquiteturais
-│
-└── docker-compose.yml       # Orquestração de containers
+└── docs/
 ```
 
 ## 🚀 Quick Start
 
-### Backend
+### 1. Banco de Dados (Docker)
 
 ```bash
 cd backend
+docker-compose up -d db
+```
+
+### 2. Configurar variáveis de ambiente
+
+```bash
+cp .env.example .env
+```
+
+Edite `.env` com as credenciais do Docker:
+```
+DATABASE_URL="postgresql://postgres:password@localhost:5432/professores_db"
+```
+
+### 3. Instalar dependências e migrar
+
+```bash
 npm install
+npx prisma migrate dev --name init
+npx ts-node prisma/seed.ts
+```
+
+### 4. Iniciar servidor
+
+```bash
 npm run dev
 ```
 
-### Frontend
+A API rodará em `http://localhost:3000`.
+
+### 5. Frontend
+
+Em outro terminal:
 
 ```bash
-# Abrir em um servidor HTTP local
-cd frontend
-# Use um servidor como: python -m http.server 8000
+cd frontend\src
+python -m http.server 8080
+```
+
+Acesse `http://localhost:8080`.
+
+### 6. Criar usuário
+
+```powershell
+Invoke-RestMethod -Uri http://localhost:3000/usuarios -Method Post -ContentType "application/json" -Body '{"email":"admin@email.com","senha":"123456"}'
 ```
 
 ## 📚 Documentação
 
-Veja [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para entender as decisões arquiteturais do projeto.
+- [API Endpoints](backend/README_API.md)
+- [Arquitetura](docs/ARCHITECTURE.md)
 
 ## 🛠️ Tecnologias
 
 - **Backend**: Express, TypeScript, Prisma, JWT
-- **Banco de Dados**: PostgreSQL
-- **Frontend**: HTML5, CSS, JavaScript
-
-## 📝 Licença
-
-ISC
+- **Banco de Dados**: PostgreSQL (Docker)
+- **Frontend**: HTML5, CSS, JavaScript (Vanilla)

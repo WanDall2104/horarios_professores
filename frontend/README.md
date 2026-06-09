@@ -6,62 +6,53 @@ Interface web para o Sistema de Gestão de Horários de Professores.
 
 ```
 src/
-├── index.html       # Página principal (login)
-├── css/             # Estilos globais e componentes
-│   └── style.css    
-├── js/              # Scripts JavaScript
-│   └── auth.js      # Lógica de autenticação
-└── assets/          # Imagens, ícones, etc.
+├── login.html          # Página de login
+├── dashboard.html      # Dashboard com indicadores
+├── professores.html    # CRUD de professores
+├── cursos.html         # CRUD de cursos
+├── disciplinas.html    # CRUD de disciplinas
+├── aulas.html          # CRUD de aulas + grade semanal
+├── css/
+│   └── style.css
+├── js/
+│   ├── auth.js         # Autenticação (login/registro)
+│   ├── dashboard.js    # Dashboard
+│   ├── professores.js  # CRUD professores via API
+│   ├── cursos.js       # CRUD cursos via API
+│   ├── disciplinas.js  # CRUD disciplinas via API
+│   ├── aulas.js        # CRUD aulas + grade via API
+│   └── storage.js      # Utilitários
+└── assets/
 ```
 
 ## 🚀 Como Rodar
 
-### Opção 1: Servidor Python
+### Pré-requisitos
+
+- Backend rodando em `http://localhost:3000` (ver README principal)
+
+### Servidor HTTP local
 
 ```bash
-cd src
-python -m http.server 8000
+cd frontend\src
+python -m http.server 8080
 ```
 
-Acesse em `http://localhost:8000`
+Acesse `http://localhost:8080`
 
-### Opção 2: Servidor Node (http-server)
+### Criar primeiro usuário
 
-```bash
-npm install -g http-server
-cd src
-http-server
+Com o backend rodando:
+
+```powershell
+Invoke-RestMethod -Uri http://localhost:3000/usuarios -Method Post -ContentType "application/json" -Body '{"email":"admin@email.com","senha":"123456"}'
 ```
 
-### Opção 3: VS Code Live Server
+### Alternativas para servidor HTTP
 
-1. Instale a extensão "Live Server"
-2. Clique direito em `index.html`
-3. Selecione "Open with Live Server"
+- **Node (http-server):** `npx http-server -p 8080`
+- **VS Code Live Server:** clicar com direito no `index.html` > "Open with Live Server"
 
-## 🛠️ Desenvolvimento
+## 🔗 API
 
-### Estrutura de Componentes
-
-- **HTML**: Estrutura semântica
-- **CSS**: Responsivo, mobile-first
-- **JavaScript**: Vanilla JS ou framework conforme necessário
-
-### Conectar com Backend
-
-Atualize a URL da API em `js/config.js`:
-
-```javascript
-const API_URL = 'http://localhost:3000/api';
-```
-
-## 📝 Features
-
-- [ ] Login
-- [ ] Dashboard
-- [ ] Gerenciamento de Aulas
-- [ ] Visualização de Horários
-
-## 🚀 Build/Deploy
-
-Se usar build tools (Vite, Webpack), configure conforme necessário.
+O frontend se comunica com o backend em `http://localhost:3000`. Certifique-se de que o backend esteja rodando antes de usar o sistema.

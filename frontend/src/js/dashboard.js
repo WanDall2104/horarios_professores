@@ -1,3 +1,5 @@
+const API = 'http://localhost:3000';
+
 async function logout() {
   if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
@@ -6,17 +8,36 @@ async function logout() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   const userName = localStorage.getItem('userName') || 'Usuário';
   document.getElementById('user-name').textContent = userName;
 
-  const professores = loadData(StorageKeys.PROFESSORES);
-  const cursos = loadData(StorageKeys.CURSOS);
-  const disciplinas = loadData(StorageKeys.DISCIPLINAS);
-  const aulas = loadData(StorageKeys.AULAS);
+  try {
+    const [resProf, resCursos, resDisc, resAulas] = await Promise.all([
+      fetch(API + '/professores'),
+      fetch(API + '/cursos'),
+      fetch(API + '/disciplinas'),
+      fetch(API + '/aulas')
+    ]);
 
-  document.getElementById('total-professores').textContent = professores.length;
-  document.getElementById('total-cursos').textContent = cursos.length;
-  document.getElementById('total-disciplinas').textContent = disciplinas.length;
-  document.getElementById('total-aulas').textContent = aulas.length;
+    if (resProf.ok) {
+      const data = await resProf.json();
+      document.getElementById('total-professores').textContent = data.length;
+    }
+
+    if (resCursos.ok) {
+      const data = await resCursos.json();
+      document.getElementById('total-cursos').textContent = data.length;
+    }
+
+    if (resDisc.ok) {
+      const data = await resDisc.json();
+      document.getElementById('total-disciplinas').textContent = data.length;
+    }
+
+    if (resAulas.ok) {
+      const data = await resAulas.json();
+      document.getElementById('total-aulas').textContent = data.length;
+    }
+  } catch {}
 });

@@ -51,18 +51,21 @@ async function main() {
   const profJoao = await prisma.professor.create({
     data: {
       nome: 'João Silva',
+      email: 'joao.silva@email.com',
     },
   });
 
   const profMaria = await prisma.professor.create({
     data: {
       nome: 'Maria Santos',
+      email: 'maria.santos@email.com',
     },
   });
 
   const profPedro = await prisma.professor.create({
     data: {
       nome: 'Pedro Oliveira',
+      email: 'pedro.oliveira@email.com',
     },
   });
 

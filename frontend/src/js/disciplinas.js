@@ -1,3 +1,5 @@
+const API = 'http://localhost:3000';
+
 let disciplinas = [];
 let cursos = [];
 
@@ -17,10 +19,13 @@ function showFeedback(mensagem, tipo = 'success') {
   setTimeout(() => { el.style.display = 'none'; }, 3500);
 }
 
-function carregarCursosDropdown(selectId = 'curso-disciplina') {
-  cursos = loadData(StorageKeys.CURSOS);
-  const select = document.getElementById(selectId);
+async function carregarCursosDropdown(selectId = 'curso-disciplina') {
+  try {
+    const res = await fetch(API + '/cursos');
+    if (res.ok) cursos = await res.json();
+  } catch {}
 
+  const select = document.getElementById(selectId);
   select.innerHTML = '<option value="">Selecione um curso...</option>';
   cursos.forEach(curso => {
     const option = document.createElement('option');
@@ -35,8 +40,23 @@ function carregarCursosDropdownEdit() {
 }
 
 async function carregarDisciplinas() {
-  disciplinas = loadData(StorageKeys.DISCIPLINAS);
-  cursos = loadData(StorageKeys.CURSOS);
+  try {
+    const res = await fetch(API + '/disciplinas');
+    if (res.ok) {
+      const data = await res.json();
+      disciplinas = data.map(d => ({
+        id: d.id,
+        nome: d.nome,
+        cursoId: d.cursoId
+      }));
+    }
+  } catch {}
+
+  try {
+    const res = await fetch(API + '/cursos');
+    if (res.ok) cursos = await res.json();
+  } catch {}
+
   renderizarDisciplinas();
 }
 
@@ -54,41 +74,47 @@ async function salvarDisciplina() {
     return;
   }
 
-  const duplicada = disciplinas.some(
-    d => d.nome.toLowerCase() === nome.toLowerCase() && d.cursoId === cursoId
-  );
+  try {
+    const res = await fetch(API + '/disciplinas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, cursoId })
+    });
 
-  if (duplicada) {
-    showFeedback('Esta disciplina já está cadastrada para o curso selecionado.', 'error');
-    return;
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao cadastrar disciplina', 'error');
+      return;
+    }
+
+    document.getElementById('disciplina-form').reset();
+    await carregarDisciplinas();
+    await carregarCursosDropdown();
+    showFeedback('Disciplina cadastrada com sucesso!', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
   }
-
-  const disciplina = {
-    id: 'disc-' + Date.now(),
-    nome,
-    cursoId
-  };
-
-  disciplinas.push(disciplina);
-  saveData(StorageKeys.DISCIPLINAS, disciplinas);
-
-  document.getElementById('disciplina-form').reset();
-  carregarCursosDropdown();
-  renderizarDisciplinas();
-  showFeedback('Disciplina cadastrada com sucesso!', 'success');
 }
 
 async function removerDisciplina(id) {
   if (!await showConfirm('Tem certeza que deseja remover esta disciplina?')) return;
 
-  disciplinas = disciplinas.filter(d => d.id !== id);
-  saveData(StorageKeys.DISCIPLINAS, disciplinas);
+  try {
+    const res = await fetch(API + '/disciplinas/' + id, { method: 'DELETE' });
 
-  renderizarDisciplinas();
-  showFeedback('Disciplina removida com sucesso.', 'success');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao remover disciplina', 'error');
+      return;
+    }
+
+    await carregarDisciplinas();
+    showFeedback('Disciplina removida com sucesso.', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
+  }
 }
 
-// ===== EDIÇÃO DE DISCIPLINA =====
 function abrirEdicaoDisciplina(id) {
   const disciplina = disciplinas.find(d => d.id === id);
   if (!disciplina) return;
@@ -121,24 +147,25 @@ async function salvarEdicaoDisciplina() {
     return;
   }
 
-  const duplicada = disciplinas.some(
-    d => d.id !== id && d.nome.toLowerCase() === nome.toLowerCase() && d.cursoId === cursoId
-  );
+  try {
+    const res = await fetch(API + '/disciplinas/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, cursoId })
+    });
 
-  if (duplicada) {
-    showFeedback('Esta disciplina já está cadastrada para o curso selecionado.', 'error');
-    return;
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao atualizar disciplina', 'error');
+      return;
+    }
+
+    fecharModalDisciplina();
+    await carregarDisciplinas();
+    showFeedback('Disciplina atualizada com sucesso!', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
   }
-
-  const index = disciplinas.findIndex(d => d.id === id);
-  if (index === -1) return;
-
-  disciplinas[index] = { ...disciplinas[index], nome, cursoId };
-  saveData(StorageKeys.DISCIPLINAS, disciplinas);
-
-  fecharModalDisciplina();
-  renderizarDisciplinas();
-  showFeedback('Disciplina atualizada com sucesso!', 'success');
 }
 
 document.addEventListener('click', function(e) {

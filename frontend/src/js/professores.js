@@ -1,5 +1,6 @@
-// ===== DADOS EM MEMÓRIA (substituir por chamadas de API depois) =====
-let professores = loadData(StorageKeys.PROFESSORES);
+const API = 'http://localhost:3000';
+
+let professores = [];
 
 function showFeedback(mensagem, tipo = 'success') {
   const el = document.getElementById('msg-feedback');
@@ -17,20 +18,29 @@ const diasSemana = {
   SEXTA: 'Sexta-feira'
 };
 
-// ===== FUNÇÃO PARA CARREGAR DADOS =====
 async function carregarProfessores() {
-  // TODO: Substituir por chamada GET /professores quando o backend estiver pronto
-  professores = loadData(StorageKeys.PROFESSORES);
+  try {
+    const res = await fetch(API + '/professores');
+    if (res.ok) {
+      const data = await res.json();
+      professores = data.map(p => ({
+        id: p.id,
+        nome: p.nome,
+        email: p.email,
+        disponibilidade: p.disponibilidades
+          ? p.disponibilidades.filter(d => d.disponivel).map(d => d.diaSemana)
+          : []
+      }));
+    }
+  } catch {}
   renderizarProfessores();
 }
 
-// ===== FUNÇÃO PARA SALVAR PROFESSOR =====
 async function salvarProfessor() {
   const nome = document.getElementById('nome-professor').value.trim();
   const email = document.getElementById('email-professor').value.trim();
   const disponibilidadeCheckboxes = document.querySelectorAll('input[name="disponibilidade"]:checked');
-  
-  // Validação
+
   if (!nome || !email) {
     showFeedback('Por favor, preencha todos os campos obrigatórios.', 'error');
     return;
@@ -43,38 +53,46 @@ async function salvarProfessor() {
 
   const disponibilidade = Array.from(disponibilidadeCheckboxes).map(cb => cb.value);
 
-  const professor = {
-    id: 'prof-' + Date.now(),
-    nome,
-    email,
-    disponibilidade
-  };
+  try {
+    const res = await fetch(API + '/professores', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, email, disponibilidade })
+    });
 
-  // TODO: Substituir por chamada POST /professores quando o backend estiver pronto
-  professores.push(professor);
-  saveData(StorageKeys.PROFESSORES, professores);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao cadastrar professor', 'error');
+      return;
+    }
 
-  // Limpar formulário
-  document.getElementById('professor-form').reset();
-  
-  // Atualizar interface
-  renderizarProfessores();
-  showFeedback('Professor cadastrado com sucesso!', 'success');
+    document.getElementById('professor-form').reset();
+    await carregarProfessores();
+    showFeedback('Professor cadastrado com sucesso!', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
+  }
 }
 
-// ===== FUNÇÃO PARA REMOVER PROFESSOR =====
 async function removerProfessor(id) {
   if (!await showConfirm('Tem certeza que deseja remover este professor?')) return;
 
-  // TODO: Substituir por chamada DELETE /professores/:id quando o backend estiver pronto
-  professores = professores.filter(p => p.id !== id);
-  saveData(StorageKeys.PROFESSORES, professores);
-  
-  renderizarProfessores();
-  showFeedback('Professor removido com sucesso!', 'success');
+  try {
+    const res = await fetch(API + '/professores/' + id, { method: 'DELETE' });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao remover professor', 'error');
+      return;
+    }
+
+    await carregarProfessores();
+    showFeedback('Professor removido com sucesso!', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
+  }
 }
 
-// ===== EDIÇÃO DE PROFESSOR =====
 function abrirEdicaoProfessor(id) {
   const professor = professores.find(p => p.id === id);
   if (!professor) return;
@@ -112,15 +130,26 @@ async function salvarEdicaoProfessor() {
   }
 
   const disponibilidade = Array.from(disponibilidadeCheckboxes).map(cb => cb.value);
-  const index = professores.findIndex(p => p.id === id);
-  if (index === -1) return;
 
-  professores[index] = { ...professores[index], nome, email, disponibilidade };
-  saveData(StorageKeys.PROFESSORES, professores);
+  try {
+    const res = await fetch(API + '/professores/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, email, disponibilidade })
+    });
 
-  fecharModalProfessor();
-  renderizarProfessores();
-  showFeedback('Professor atualizado com sucesso!', 'success');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showFeedback(data.error || 'Erro ao atualizar professor', 'error');
+      return;
+    }
+
+    fecharModalProfessor();
+    await carregarProfessores();
+    showFeedback('Professor atualizado com sucesso!', 'success');
+  } catch {
+    showFeedback('Erro ao conectar com o servidor', 'error');
+  }
 }
 
 document.addEventListener('click', function(e) {
@@ -128,9 +157,6 @@ document.addEventListener('click', function(e) {
   if (e.target === modal) fecharModalProfessor();
 });
 
-// ===== RENDERIZAÇÃO =====
-
-// Renderizar lista de professores
 function renderizarProfessores() {
   const tabela = document.getElementById('tabela-professores');
   const emptyState = document.getElementById('empty-state');
@@ -174,7 +200,6 @@ function renderizarProfessores() {
   });
 }
 
-// ===== FUNÇÃO PARA LOGOUT =====
 async function logout() {
   if (await showConfirm('Tem certeza que deseja sair do sistema?')) {
     localStorage.removeItem('token');
@@ -182,12 +207,8 @@ async function logout() {
   }
 }
 
-// ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
-  // Carregar nome do usuário
   const userName = localStorage.getItem('userName') || 'Usuário';
   document.getElementById('user-name').textContent = userName;
-
-  // Carregar professores
   carregarProfessores();
 });

@@ -36,16 +36,17 @@ export class AulaService {
   }
 
   async criar(dto: CriarAulaDTO): Promise<CriarAulaResponse> {
-    const { diaSemana, professorId, disciplinaId, cursoId } = dto;
+    const { diaSemana, professorId, disciplinaId, cursoId, periodoTurma, campus } = dto;
 
     await this.validarDisponibilidadeProfessor(professorId, diaSemana);
 
-    // Remover validação de conflito único (permitir múltiplas aulas do mesmo professor/curso no mesmo dia)
     const aula = await this.salvarAula({
       diaSemana,
       professorId,
       disciplinaId,
       cursoId,
+      periodoTurma,
+      campus,
     });
 
     return aula;
