@@ -1,8 +1,133 @@
 ### Variáveis
 @baseUrl = http://localhost:3000
+@professorId = 
+@cursoId = 
+@disciplinaId = 
+@aulaId = 
+
+### ========== AUTENTICAÇÃO ==========
 
 ### Health Check
 GET {{baseUrl}}/health
+
+### Login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "usuario@example.com",
+  "senha": "senha123"
+}
+
+### Registrar Novo Usuário
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "email": "novo@example.com",
+  "senha": "senha123"
+}
+
+### ========== PROFESSORES ==========
+
+### Listar Professores
+GET {{baseUrl}}/professores
+
+### Obter Professor por ID
+GET {{baseUrl}}/professores/{{professorId}}
+
+### Criar Professor
+POST {{baseUrl}}/professores
+Content-Type: application/json
+
+{
+  "nome": "João Silva",
+  "email": "joao@example.com",
+  "disponibilidade": ["SEGUNDA", "TERCA", "QUARTA", "QUINTA"]
+}
+
+### Atualizar Professor
+PUT {{baseUrl}}/professores/{{professorId}}
+Content-Type: application/json
+
+{
+  "nome": "João Santos Silva",
+  "email": "joao.santos@example.com",
+  "disponibilidade": ["SEGUNDA", "TERCA", "QUARTA"]
+}
+
+### Remover Professor
+DELETE {{baseUrl}}/professores/{{professorId}}
+
+### ========== CURSOS ==========
+
+### Listar Cursos
+GET {{baseUrl}}/cursos
+
+### Obter Curso por ID
+GET {{baseUrl}}/cursos/{{cursoId}}
+
+### Criar Curso
+POST {{baseUrl}}/cursos
+Content-Type: application/json
+
+{
+  "nome": "Engenharia de Software",
+  "periodo": "3º Período",
+  "descricao": "Curso de Engenharia de Software",
+  "cargaHoraria": 120
+}
+
+### Atualizar Curso
+PUT {{baseUrl}}/cursos/{{cursoId}}
+Content-Type: application/json
+
+{
+  "nome": "Engenharia de Software Avançada",
+  "periodo": "4º Período",
+  "descricao": "Curso avançado de Engenharia de Software",
+  "cargaHoraria": 140
+}
+
+### Remover Curso
+DELETE {{baseUrl}}/cursos/{{cursoId}}
+
+### ========== DISCIPLINAS ==========
+
+### Listar Disciplinas
+GET {{baseUrl}}/disciplinas
+
+### Obter Disciplina por ID
+GET {{baseUrl}}/disciplinas/{{disciplinaId}}
+
+### Criar Disciplina
+POST {{baseUrl}}/disciplinas
+Content-Type: application/json
+
+{
+  "nome": "Programação em Java",
+  "cursoId": "{{cursoId}}"
+}
+
+### Atualizar Disciplina
+PUT {{baseUrl}}/disciplinas/{{disciplinaId}}
+Content-Type: application/json
+
+{
+  "nome": "Programação Avançada em Java",
+  "cursoId": "{{cursoId}}"
+}
+
+### Remover Disciplina
+DELETE {{baseUrl}}/disciplinas/{{disciplinaId}}
+
+### ========== AULAS ==========
+
+### Listar Aulas
+GET {{baseUrl}}/aulas
+
+### Obter Aula por ID
+GET {{baseUrl}}/aulas/{{aulaId}}
 
 ### Criar Aula - Sucesso
 POST {{baseUrl}}/aulas
@@ -10,40 +135,47 @@ Content-Type: application/json
 
 {
   "diaSemana": "SEGUNDA",
-  "professorId": "prof-123",
-  "disciplinaId": "disc-456",
-  "cursoId": "curso-789"
+  "professorId": "{{professorId}}",
+  "disciplinaId": "{{disciplinaId}}",
+  "cursoId": "{{cursoId}}",
+  "periodoTurma": "3º Período - Turma A",
+  "campus": "Campus Principal"
 }
 
-### Criar Aula - Professor Indisponível (esperado erro 409)
-POST {{baseUrl}}/aulas
+### Atualizar Aula
+PUT {{baseUrl}}/aulas/{{aulaId}}
 Content-Type: application/json
 
 {
   "diaSemana": "TERCA",
-  "professorId": "prof-indisponivel",
-  "disciplinaId": "disc-456",
-  "cursoId": "curso-789"
+  "periodoTurma": "3º Período - Turma B",
+  "campus": "Campus Principal"
 }
 
-### Criar Aula - Conflito de Professor (professor já tem aula neste dia)
+### Remover Aula
+DELETE {{baseUrl}}/aulas/{{aulaId}}
+
+### ========== TESTES DE ERRO ==========
+
+### Criar Aula - Professor Indisponível
 POST {{baseUrl}}/aulas
 Content-Type: application/json
 
 {
-  "diaSemana": "SEGUNDA",
-  "professorId": "prof-123",
-  "disciplinaId": "disc-789",
-  "cursoId": "curso-999"
+  "diaSemana": "SABADO",
+  "professorId": "{{professorId}}",
+  "disciplinaId": "{{disciplinaId}}",
+  "cursoId": "{{cursoId}}"
 }
 
-### Criar Aula - Conflito de Curso (curso já tem aula neste dia)
-POST {{baseUrl}}/aulas
+### Criar Disciplina - Curso Inválido
+POST {{baseUrl}}/disciplinas
 Content-Type: application/json
 
 {
-  "diaSemana": "SEGUNDA",
-  "professorId": "prof-999",
-  "disciplinaId": "disc-789",
-  "cursoId": "curso-789"
+  "nome": "Disciplina Teste",
+  "cursoId": "curso-invalido"
 }
+
+### Remover Curso com Disciplinas
+DELETE {{baseUrl}}/cursos/{{cursoId}}
